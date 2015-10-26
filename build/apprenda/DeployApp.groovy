@@ -1,6 +1,8 @@
 package com.apprenda.integrations.urbancode
 
-// this is required in order to get the right file
+/**
+ * this is required in order to get the right file
+ */
 @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7.1' )
 import groovyx.net.http.RESTClient
 import com.urbancode.air.AirPluginTool
@@ -14,7 +16,10 @@ try {
 	def client = new RESTClient(props.ApprendaURL)
     // handle authentication
 	client.handler.failure = client.handler.success
-    client.ignoreSSLIssues()
+    if (props.SelfSignedFlag) 
+	{ 
+		client.ignoreSSLIssues() 
+	}
 	def resp = client.post(path:paths.Auth, body:[username:props.ApprendaUser, password:props.ApprendaPassword, tenantAlias:props.TenantAlias], requestContentType: JSON)
     println "Authentication Response Code: " + resp.status
 	println "Authentication Response Data: " + resp.getData()

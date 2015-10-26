@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" xmlns:server="http://www.urbancode.com/PluginServerXMLSchema_v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
   <header>
     <identifier id="apprendadeploy" name="AppendaDeploy" version="1"/>
     <description>
-      Deploys applications to Apprenda
+      Deploys applications to Apprenda, also provides application component support for BlueMix
 	  </description>
     <tag>PaaS</tag>
   </header>
@@ -13,6 +12,9 @@
     <properties>
       		<property name="ApprendaURL">
                 <property-ui description="The root url of the Apprenda instance." label="Apprenda REST URL" type="textBox"/>
+            </property>
+            <property name="SelfSignedFlag">
+            	<property-ui description="Check this is your are using a development environment. Do NOT enable in production." label="This environment is using a self-signed SSL certificate" type="checkBox"/>
             </property>
             <property name="ApprendaUser">
                 <property-ui description="The developer account username associated with the platform." label="Apprenda User Name" type="textBox"/>
@@ -26,6 +28,7 @@
             <property name="AppAlias">
                 <property-ui description="The Application Alias" label="Application" type="textBox"/>
             </property>
+            <!--  This probably goes away with the artifact, we'll address this later. -->
             <property name="ArchiveLocation">
                 <property-ui description="Location of the archive." label="Application Archive Location" type="textBox"/>
             </property>
@@ -34,12 +37,9 @@
             </property>
             <property name="Stage">
             	<property-ui description="The target stage for the uploaded archive" label="Stage" type="selectBox"/>
-            	<value label="Definition">definition</value>
-
-            	<value label="Sandbox">sandbox</value>
-
-            	<value label="Published">published</value>
-
+            	<value label="Definition">Definition</value>
+            	<value label="Sandbox">Sandbox</value>
+            	<value label="Published">Published</value>
             </property>
     </properties>
     <!-- This is the standard post processing script. It sets the step to Success if the exit code
@@ -60,12 +60,790 @@
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
       <arg path="java/example.jar:lib/gson-2.2.4.jar"/>
-      <arg file="cmd.groovy"/>
+      <arg file="DeployApp.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+  <step-type name="Push Application">
+    <description>Push application with or without a manifest file. If a manifest file is found then properties are used as overrides.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="appName" required="false">
+        <property-ui default-value="" description="The name of the application to use when deployed. Required if not using a manifest." label="Application Name" type="textBox"/>
+      </property>
+      <property name="manifest" required="false">
+        <property-ui default-value="" description="Path to the manifest file. Default is to look in the working directory." label="Manifest file" type="textBox"/>
+      </property>
+      <property name="domain" required="false">
+        <property-ui default-value="" description="Set a custom domain to be used when deploying the application." label="Domain" type="textBox"/>
+      </property>
+      <property name="subdomain" required="false">
+        <property-ui default-value="" description="Define a sub-domain for your application. This is useful to ensure that the URL route for the application is unique within the domain." label="Sub-domain" type="textBox"/>
+      </property>
+      <property name="instances" required="false">
+        <property-ui default-value="1" description="The number of instances of the application that will be created." label="Number of instances" type="textBox"/>
+      </property>
+      <property name="memory" required="false">
+        <property-ui default-value="" description="The memory limit (e.g., 256M, 1024M, 1G)." label="Memory limit" type="textBox"/>
+      </property>
+      <property name="disk" required="false">
+        <property-ui default-value="" description="The disk limit (e.g. 256M, 1024M, 1G)." label="Disk limit" type="textBox"/>
+      </property>
+      <property name="buildpack" required="false">
+        <property-ui default-value="" description="Custom buildpack by name (e.g. my-buildpack) or GIT URL (e.g. https://github.com/heroku/heroku-buildpack-play.git)." label="Custom buildpack" type="textBox"/>
+      </property>
+      <property name="path" required="false">
+        <property-ui default-value="" description="Path of app directory or zip file." label="Application path" type="textBox"/>
+      </property>
+      <property name="stack" required="false">
+        <property-ui default-value="" description=" Stack to use (a stack is a pre-built file system, including an operating system, that can run apps)." label="Stack" type="textBox"/>
+      </property>
+      <property name="timeout" required="false">
+        <property-ui default-value="" description="Maximum time (in seconds) to wait for application start, other server side timeouts may apply." label="Timeout" type="textBox"/>
+      </property>
+      <property name="nostart">
+       <property-ui description="Does not start the application if selected." label="No start" type="checkBox"/>
+      </property>
+      <property name="noroute">
+       <property-ui description="Does not create a URL route for the application if selected. Manually create and map a route later." label="No route" type="checkBox"/>
+      </property>
+      <property name="nomanifest">
+       <property-ui description="Ignore the manifest file if one exists." label="No manifest" type="checkBox"/>
+      </property>
+      <property name="nohostname">
+       <property-ui description="Map the root domain to this application." label="No hostname" type="checkBox"/>
+      </property>
+      <property name="randomroute">
+       <property-ui description="Create a random route for this app." label="Random route" type="checkBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="pushApplication.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+
+
+  <step-type name="Execute CF Script">
+    <description>Execute a CF script. The context will be setup with the authenticated user and target space. CF command line will be available to the script.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="script" required="true">
+        <property-ui default-value="" description="Each command needs to be on a new line." label="Script" type="textAreaBox"/>
+      </property>
+      <property name="args" required="false">
+        <property-ui default-value="" description="Arguments to be passed to the script." label="Arguments" type="textBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="executeScript.groovy"/>
       <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
   
+   <step-type name="Execute CF bash file">
+    <description>Execute a CF bash file. The context will be setup with the authenticated user and target space. CF command line will be available to the bash script.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="script_file" required="true">
+        <property-ui default-value="" description="Path to the CF bash file." label="Script" type="textBox"/>
+      </property>
+      <property name="args" required="false">
+        <property-ui default-value="" description="Arguments to be passed to the script." label="Arguments" type="textBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="executeScriptFile.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+
+  <step-type name="Create Service">
+    <description>Create a new CF service.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="name" required="true">
+        <property-ui default-value="" description="Name of the service." label="Service name" type="textBox"/>
+      </property>
+      <property name="service" required="true">
+        <property-ui default-value="" description="Type of service." label="Service type" type="textBox"/>
+      </property>
+      <property name="plan" required="true">
+        <property-ui default-value="" description="Service plan." label="Service plan" type="textBox"/>
+      </property>
+      
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="createService.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+<step-type name="Bind Service">
+    <description>Bind a CF service onto a CF application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="application" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+      <property name="service" required="true">
+        <property-ui default-value="" description="Name of the service." label="Service name" type="textBox"/>
+      </property>
+      
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="bindService.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+<step-type name="Unbind Service">
+    <description>Unbind a CF service from a CF application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="application" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+      <property name="service" required="true">
+        <property-ui default-value="" description="Name of the service." label="Service name" type="textBox"/>
+      </property>
+      
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="unbindService.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+  <step-type name="Map Route">
+    <description>Add a url route to an application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="app" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+      <property name="domain" required="true">
+        <property-ui default-value="" description="Domain to use." label="Domain" type="textBox"/>
+      </property>
+      <property name="hostname" required="false">
+        <property-ui default-value="" description="The hostname within the domain for the url route." label="Hostname" type="textBox"/>
+      </property>
+      
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="mapRoute.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+  <step-type name="Unmap Route">
+    <description>Remove a url route to an application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="app" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+      <property name="domain" required="true">
+        <property-ui default-value="" description="Domain to use." label="Domain" type="textBox"/>
+      </property>
+      <property name="hostname" required="false">
+        <property-ui default-value="" description="The hostname within the domain for the url route." label="Hostname" type="textBox"/>
+      </property>
+      
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="unmapRoute.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+  <step-type name="Delete App">
+    <description>Delete an application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="app" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+      <property name="delete_routes" required="false">
+        <property-ui description="Also delete any mapped routes." label="Delete mapped routes" type="checkBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="deleteApp.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+<step-type name="Start App">
+    <description>Start an application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="app" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="startApp.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+<step-type name="Stop App">
+    <description>Stop an application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="app" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="stopApp.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+<step-type name="Restart App">
+    <description>Restart an application.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="app" required="true">
+        <property-ui default-value="" description="Name of the application." label="Application name" type="textBox"/>
+      </property>
+    </properties>
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="restartApp.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+  <step-type name="Create Route">
+    <description>Create a url route in a space.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="domain" required="true">
+        <property-ui default-value="" description="Name of the domain owning the route." label="Domain" type="textBox"/>
+      </property>
+      <property name="hostname" required="false">
+        <property-ui default-value="" description="The hostname within the domain for the url route." label="Hostname" type="textBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="createRoute.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+<step-type name="Delete Route">
+    <description>Delete a route.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="domain" required="true">
+        <property-ui default-value="" description="Name of the domain owning the route." label="Domain" type="textBox"/>
+      </property>
+      <property name="hostname" required="false">
+        <property-ui default-value="" description="The hostname within the domain for the url route." label="Hostname" type="textBox"/>
+      </property>
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="deleteRoute.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+  <step-type name="Create Domain">
+    <description>Create a domain in an org.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="domain" required="true">
+        <property-ui default-value="" description="Name of the domain owning the route." label="Domain" type="textBox"/>
+      </property>
+
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="createDomain.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+
+  <step-type name="Delete Domain">
+    <description>Delete a domain.</description>
+    <properties>
+      <property name="api" required="true">
+        <property-ui default-value="${p:resource/CF_API}" description="A url of the target Cloud Foundry system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
+      </property>
+      <property name="user" required="true">
+        <property-ui default-value="" description="The user name of the account that will interact with Cloud Foundry system" label="Cloud Foundry User" type="textBox"/>
+      </property>
+      <property name="password" required="true">
+        <property-ui default-value="" description="The password of the account that will interact with Cloud Foundry system." label="Password" type="secureBox"/>
+      </property>
+      <property name="selfSigned">
+        <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
+      </property>
+       <property name="org" required="true">
+        <property-ui default-value="${p:resource/CF_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
+      </property>
+      <property name="space" required="true">
+        <property-ui default-value="${p:resource/CF_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
+      </property>
+      <property name="domain" required="true">
+        <property-ui default-value="" description="Name of the domain owning the route." label="Domain" type="textBox"/>
+      </property>
+
+    </properties>
+   
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes"/>
+      <arg file="deleteDomain.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
   <step-type name="NewApplication">
   	<description>Creates a new application in Apprenda</description>
   	<properties>
@@ -106,8 +884,15 @@
   </step-type>
   <step-type name="Scale">
   	<description>Usually used as a post-deployment step, this scales the Apprenda app instances up/down</description>
-  	<properties />
-  	<post-processing />
+  	<properties/>
+  	<post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
   	<command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
       <arg path="java/example.jar:lib/gson-2.2.4.jar"/>
@@ -118,8 +903,34 @@
   </step-type>
   <step-type name="Apply Addon Configuration">
   	<description>Adds a Apprenda Addon Token Configuration to the App</description>
-  	<properties />
-  	<post-processing />
+  	<properties/>
+  	<post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+  	<command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="java/example.jar:lib/gson-2.2.4.jar"/>
+      <arg file="AddonConfig.groovy"/>
+      <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+  	</command>
+  </step-type>
+  <step-type name="Deploy BlueMix Component - ">
+  	<description>Deploys an Apprenda component to BlueMix</description>
+  	<properties/>
+  	<post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
   	<command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
       <arg path="java/example.jar:lib/gson-2.2.4.jar"/>
