@@ -1,5 +1,5 @@
 /**
- *
+ * 
  */
 package com.apprenda.integrations.urbancode
 
@@ -7,19 +7,16 @@ package com.apprenda.integrations.urbancode
  * @author cdutra
  *
  */
-class ScaleApp {
-	// this is required in order to get the right file
-	@Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7.1' )
 	import groovyx.net.http.RESTClient
 	import com.urbancode.air.AirPluginTool
 	import static groovyx.net.http.ContentType.*
 	final def apTool = new AirPluginTool(this.args[0], this.args[1])
 	final def props = apTool.getStepProperties()
-	def paths = [Auth:'/authentication/api/v1/sessions/developer',
-		NewVersion:'/developer/api/v1/versions/',
-		NewApp:'/developer/api/v1/apps/'
-		GetAliases:'/developer/api/v1/apps/',
-		GetVersions:'/developer/api/v1/versions/',
+	def paths = [Auth:'/authentication/api/v1/sessions/developer', 
+		NewVersion:'/developer/api/v1/versions/', 
+		NewApp:'/developer/api/v1/apps/',
+		GetAliases:'/developer/api/v1/apps/', 
+		GetVersions:'/developer/api/v1/versions/', 
 		Demote:'/developer/api/v1/versions/']
 	
 	def newVersionRequired = false
@@ -34,9 +31,3 @@ class ScaleApp {
 	def token = resp.getData().apprendaSessionToken
 	client.defaultRequestHeaders.'ApprendaSessionToken' = token
 	println "Authentication Routine Complete"
-	
-	
-}
-class ScaleApp {
-
-}

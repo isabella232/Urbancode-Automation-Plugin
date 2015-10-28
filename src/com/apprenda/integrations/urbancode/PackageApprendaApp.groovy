@@ -6,6 +6,7 @@ package com.apprenda.integrations.urbancode
  * @author cdutra
  *
  */
+import groovy.util.XmlParser
 import com.urbancode.air.AirPluginTool
 import static groovyx.net.http.ContentType.*
 final def apTool = new AirPluginTool(this.args[0], this.args[1])
@@ -21,10 +22,8 @@ try
 {
 	// load deployment manifest file
 	def xmlFile = "DeploymentManifest.xml"
-	def xml = new XMLParser().parse(xmlFile)
-	// test if parent node exists, if not create it.
-	
-	
+	def xml = new XmlParser().parse(xmlFile)
+	// test if parent node exists, if not create it.	
 }
 catch(FileNotFoundException e)
 {
