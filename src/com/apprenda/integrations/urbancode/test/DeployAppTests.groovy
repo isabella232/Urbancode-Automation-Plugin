@@ -4,18 +4,31 @@ import com.apprenda.integrations.urbancode.*
 
 public class DeployAppTests extends Specification {
 	
-	// test case 1: deploy 
-	def DeployAppTestDefinition() {
+	def testProperties = [ApprendaURL:'https://apps.apprenda.heineken',
+		ApprendaUser:'cdutra@apprenda.com',
+		ApprendaPassword:'Meepster23!',
+		TenantAlias:'dutronlabs',
+		SelfSignedFlag:true,
+		AppAlias:'test']
+	
+	def TestTheTestValidationRoutine()
+	{
+		setup:
+			def test = TestValidation.getInstance(testProperties)
 		expect:
-			name.size() == length
-			
-		where:
-			name << ["Kirk", "Spock"]
-			length << [4,5]
-			
+			test.defaultRequestHeaders != null
+			test.defaultRequestHeaders.'ApprendaSessionToken' != null
 	}
 	
-	// creating tests to 
+	def TestDataRetrieval()
+	{
+		setup:
+			def data = TestValidation.GetApplicationInfo(testProperties)
+		expect:
+			data.alias == 'test'
+	}
+	
+	// 
 	def DeployAppTestSandbox() {
 		
 	}

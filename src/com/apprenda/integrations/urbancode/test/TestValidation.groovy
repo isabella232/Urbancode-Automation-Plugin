@@ -2,30 +2,37 @@
  * 
  */
 package com.apprenda.integrations.urbancode.test;
-
 import groovyx.net.http.RESTClient
+import com.apprenda.integrations.urbancode.util.Constants;
+import static groovyx.net.http.ContentType.*
 
-/**
- * @author cdutra
- *
- */
-public class TestValidation {
+class TestValidation {
 	
 	static def client = null
+	
+	public static getInstance(props)
+	{	
+		if(client == null){
+			client = init(props)
+		}
+		return client
+	}
 	
 	public TestValidation(props)
 	{
 		this.client = init(props)
 	}
 	
-	// so we don't have to worry about reauthenticating, we'll do it on intialization of the class
-	private def init(props)
+	// so we don't have to worry about re-authenticating, we'll do it on initialization of the class
+	private static def init(props)
 	{
+		println props
 		def client = new RESTClient(props.ApprendaURL)
 		// this suppresses a failure message, we'll handle it separately
 		client.handler.failure = client.handler.success
 		if (props.SelfSignedFlag)
 		{
+			println "disabling SSL"
 			client.ignoreSSLIssues()
 		}
 		def resp = client.post(
@@ -44,13 +51,12 @@ public class TestValidation {
 		return client
 	}
 	
-	def GetApplications()
+	static def GetApplicationInfo(props)
 	{
-		
-	}
-	
-	def GetApplicationVersions()
-	{
-		
+		// implement self-healing
+		getInstance(props)
+		def getApps = client.get(path:'/developer/api/v1/apps/' + props.AppAlias)
+		println getApps.getData()
+		return getApps.getData()
 	}
 }

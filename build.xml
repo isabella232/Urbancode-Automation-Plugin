@@ -153,6 +153,11 @@
 	    		artifactId="gson"
 	    		version="2.2.4"
 	    	/>
+		    <dependency
+		    	groupId="org.codehaus.groovy.modules.http-builder"
+		    	artifactId="http-builder"
+		    	version="0.7.1"
+		    />
 
 		      <remoteRepository
 		        id="maven-central"
