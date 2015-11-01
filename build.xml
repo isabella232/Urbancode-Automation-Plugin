@@ -17,7 +17,16 @@
 		<property name="imports.dir" value="${basedir}/imports" />
 		<property name="maven.ant.tasks.url" value="http://mirror.sdunix.com/apache/maven/ant-tasks/2.1.3/binaries/maven-ant-tasks-2.1.3.jar" />
 		<property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.1.3.jar" />
+		<property name="clover.jar" value="C:\Users\cdutra\Documents\clover-ant-4.0.6\clover-ant-4.0.6\lib\clover.jar"/>
+		
 		<available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
+		<taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
+		
+		<target name="with.clover"> <clover-setup/> </target>
+		
+		<target name="clover.html">
+			<clover-html-report outdir="coverage" />
+		</target>
 		
 		<!-- Main Task for building packages -->
 		<target name="main" depends="clean, copyDependencies, compileBinary, buildZip" />
@@ -92,7 +101,9 @@
 		
 		<target name="test" depends="compile">
 			<junit fork="true" forkmode="once">
-			      <classpath path="${build.dir}" />
+			      <classpath path="${build.dir}">
+			      	<pathelement path="${clover.jar}"/>	
+			      </classpath>
 			      <classpath refid="classpath.spock" />       
 			      <batchtest>
 			        <fileset dir="${build.dir}">
@@ -101,7 +112,7 @@
 			            classpathref="classpath.spock" />
 			        </fileset>
 			      </batchtest>
-			      <formatter type="brief" usefile="false" />
+			      <formatter type="xml" />
 			</junit>
 		</target>
 
@@ -158,16 +169,14 @@
 		    	artifactId="http-builder"
 		    	version="0.7.1"
 		    />
-
-		      <remoteRepository
-		        id="maven-central"
-		        url="https://repo1.maven.org/maven2/" />
-		<!-- Only required if a snapshot version of Spock is used -->
-		      <remoteRepository
-		        id="spock-snapshots"
-		        url="https://oss.sonatype.org/content/repositories/snapshots/" />
-		    </artifact:dependencies>
-			
+	        <remoteRepository
+	        	id="maven-central"
+	        	url="https://repo1.maven.org/maven2/" />
+	<!-- Only required if a snapshot version of Spock is used -->
+	      	<remoteRepository
+	        	id="spock-snapshots"
+	        	url="https://oss.sonatype.org/content/repositories/snapshots/" />
+	    </artifact:dependencies>
 		</target>
 		
 		<target name="copy.resources" depends="init">

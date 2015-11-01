@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    
+    
+    <link rel="SHORTCUT ICON" href="img/clover.ico" />
+
+    <link rel="stylesheet" href="aui/css/aui.min.css" media="all"/>
+    <link rel="stylesheet" href="aui/css/aui-experimental.min.css" media="all"/>
+    <!--[if IE 9]><link rel="stylesheet" href="aui/css/aui-ie9.min.css" media="all"/><![endif]-->
+
+    <style type="text/css" media="all">
+        @import url('style.css');
+        @import url('tree.css');
+        
+    </style>
+
+    <script src="jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="aui/js/aui.min.js" type="text/javascript"></script>
+    <script src="aui/js/aui-experimental.min.js" type="text/javascript"></script>
+    <script src="aui/js/aui-soy.min.js" type="text/javascript"></script>
+
+    <script src="package-nodes-tree.js" type="text/javascript"></script>
+    <script src="clover-tree.js" type="text/javascript"></script>
+    <script src="clover.js" type="text/javascript"></script>
+    <script src="clover-descriptions.js" type="text/javascript"></script>
+    <script src="cloud.js" type="text/javascript"></script>
+    <script src="help.js" type="text/javascript"></script>
+    <script src="overlibmws.js" type="text/javascript"><!-- overLIB (c) Erik Bosrup --></script>
+    <script src="overlibmws_shadow.js" type="text/javascript"></script>
+    <script src="sorttable.js" type="text/javascript"></script>
+    <script src="utils.js" type="text/javascript"></script>
+
+            <title></title>
+    </head>
+
+<body onresize="processTreeMapDashJson(treeMapJson);" >
+    <div id="page">
+        
+        
+
+
+<header id="header" role="banner">
+    <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
+        <div class="aui-header-inner">
+            <div class="aui-header-primary">
+                <h1 id="logo" class="aui-header-logo aui-header-logo-clover">
+                    <a href="http://www.atlassian.com/clover" title="Open Atlassian Clover home page"><span class="aui-header-logo-device">Clover</span></a>
+                </h1>
+                            </div>
+            <div class="aui-header-secondary">
+                <ul class="aui-nav">
+                    <li id="system-help-menu">
+                        <a class="aui-nav-link" title="Open online Clover documentation" target="_blank"
+                           href="https://confluence.atlassian.com/display/CLOVER/Clover+Documentation+Home">
+                            <span class="aui-icon aui-icon-small aui-iconfont-help">&#160;Help</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+        
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <div class="aui-page-panel-nav aui-page-panel-nav-clover">
+                    
+
+<div class="aui-page-header-inner" style="margin-bottom: 20px;">
+    <div class="aui-page-header-image">
+                <div class="aui-avatar aui-avatar-large aui-avatar-project">
+            <div class="aui-avatar-inner">
+                                    <img src="img/clover_logo_large.png" alt="Clover icon"/>
+                            </div>
+        </div>
+            </div>
+    <div class="aui-page-header-main" >
+        <h1>
+                                        
+                                </h1>
+    </div>
+</div>
+
+<nav class="aui-navgroup aui-navgroup-vertical">
+    <div class="aui-navgroup-inner">
+                                            <ul class="aui-nav">
+                <li class="aui-nav-selected">
+                    <a href="dashboard.html">Project overview</a>
+                </li>
+            </ul>
+        
+                <div class="aui-nav-heading packages-nav-heading">
+            <strong>Packages</strong>
+        </div>
+        <div class="aui-nav project-packages">
+            <form method="get" action="#" class="aui package-filter-container">
+                <input type="text" autocomplete="off" class="package-filter text"
+                       placeholder="Type to filter packages..." name="package-filter" id="package-filter"
+                       title="Start typing package name (or part of the name) to search through the tree. Use arrow keys and the Enter key to navigate."/>
+            </form>
+            <p class="package-filter-no-results-message hidden">
+                <small>No results found.</small>
+            </p>
+                                                  <div class="packages-tree-wrapper" data-root-relative="" data-package-name="">
+                <div class="packages-tree-container"></div>
+                <div class="clover-packages-lozenges"></div>
+            </div>
+        </div>
+        
+            </div>
+</nav>                </div>
+                <section class="aui-page-panel-content">
+                    <div class="aui-page-panel-content-clover">
+
+                    
+                    <ol class="aui-nav aui-nav-breadcrumbs">
+            
+        <li><a href="dashboard.html">Project Clover database Fri Oct 30 2015 14:53:47 EDT</a></li>
+    </ol>
+    
+<h1 class="aui-h2-clover">
+            Project overview
+    </h1>
+<div class="aui-tabs horizontal-tabs">
+        <ul class="tabs-menu">
+            <li class="menu-item active-tab">
+            <a href="dashboard.html">Dashboard</a>
+        </li>
+                <li class="menu-item ">
+            <a href="pkg-summary.html"><strong>Application code</strong></a>
+        </li>
+                <li class="menu-item ">
+            <a href="testsrc-pkg-summary.html"><strong>Test code</strong></a>
+        </li>
+        <li class="menu-item ">
+            <a href="test-pkg-summary.html"><strong>Test results</strong></a>
+        </li>
+                <li class="menu-item ">
+            <a href="top-risks.html"><strong>Top risks</strong></a>
+        </li>
+        <li class="menu-item ">
+            <a href="quick-wins.html"><strong>Quick wins</strong></a>
+        </li>
+                                                <li class="menu-item ">
+                <a href="treemap.html"><strong>Coverage tree map</strong></a>
+            </li>
+            </ul>
+    <div class="tabs-pane active-pane" id="tabs-first">
+
+        <div>&#160;</div>
+
+
+
+    <div class="aui-message aui-message-warning">
+        <p class="title">
+            <strong>Evaluation License</strong>
+        </p>
+        <p>
+            This report was generated with an evaluation server license.  <a href="http://www.atlassian.com/software/clover">Purchase Clover</a> or <a href="http://confluence.atlassian.com/x/JAgQCQ">configure your license.</a>
+        </p>
+    </div>
+
+
+
+<div class="aui-group">
+    <div class="aui-item">
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                
+                <h3>
+                    Code coverage
+                    <small style="float:right; font-weight: normal">
+                        19 classes,
+                        28 /
+                        580 elements
+                    </small>
+                </h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.048275862</span>4.8%</div><div style="display: table-cell">
+ <div title="4.8% Covered"  style="min-width:200px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:4.8%"></div></div></div></div>
+                <p><a href="pkg-summary.html">See more</a></p>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>
+                    Test results
+                    <small style="float:right; font-weight: normal">
+                        17 /
+                        21 tests
+                        47.46 secs
+                    </small>
+                </h3>
+            </header>
+            <div class="dashboard-widget-content">
+                                    
+
+<div style="display: table; width: 100%">
+            <div class="barGraphValue"><span class="sortValue">0.8095238</span>81%</div>         <div style="display: table-cell">
+            
+            <div title="0% Errors" style="min-width: 40px;" class="testBarError">
+                <div title="81% of tests passed&lt;br/&gt;19% of tests failed" class="testBarFail" style="width: 100%"><div class="testBarPass" style="width: 81%"></div></div>
+            </div>
+        </div>
+    </div>                                <p><a href="test-pkg-summary.html">See more</a></p>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Code metrics</h3>
+            </header>
+                         
+
+<div id="$statsId" class="aui-item" style="display: ${display}">
+<div style="display: table">
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of branches in this project">Branches:</label></div>
+        <div class="stats-box-value">114</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of statements in this project">Statements:</label></div>
+        <div class="stats-box-value">385</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of methods in this project">Methods:</label></div>
+        <div class="stats-box-value">81</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of classes in this project">Classes:</label></div>
+        <div class="stats-box-value">19</div>
+    </div>
+            <div class="stats-box">
+            <div class="stats-box-label"><label title="Total number of files in this project">Files:</label></div>
+            <div class="stats-box-value">19</div>
+        </div>
+                <div class="stats-box">
+            <div class="stats-box-label"><label title="Total number of packages in this project">Packages:</label></div>
+            <div class="stats-box-value">4</div>
+        </div>
+        <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of lines of code in this project">LOC:</label></div>
+        <div class="stats-box-value">1,399</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of non-comment lines of code in this project">NCLOC:</label></div>
+        <div class="stats-box-value">0</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Cyclomatic complexity is the number of paths in this project">Total complexity:</label></div>
+        <div class="stats-box-value">188</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label">
+            <label title="Complexity density is the complexity divided by the number of statements in this project">Complexity density:</label>
+        </div>
+        <div class="stats-box-value">0.49</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Number of statements per method.">Statements/Method:</label></div>
+        <div class="stats-box-value">4.75</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Number of methods per class.">Methods/Class:</label></div>
+        <div class="stats-box-value">4.26</div>
+    </div>
+            <div class="stats-box">
+            <div class="stats-box-label"><label title="Number of classes per package.">Classes/Package:</label></div>
+            <div class="stats-box-value">4.75</div>
+        </div>
+        <div class="stats-box">
+        <div class="stats-box-label"><label title="Complexity divided by the number of methods in this project">Average method complexity:</label></div>
+        <div class="stats-box-value">2.32</div>
+    </div>
+</div>
+
+</div>        </div>
+
+                <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Class Coverage Distribution</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <div style="text-align: center">                     <img src="img/classDistrubutionChart.png" alt="img/classDistrubutionChart.png" usemap="#classDistrubutionChart.png"/>
+                </div>
+                <map id="classDistrubutionChart.png" name="classDistrubutionChart.png">
+<area shape="rect" coords="288,182,310,205" title="2 classes have 91-100% coverage" alt="" nohref="nohref"/>
+<area shape="rect" coords="38,15,60,205" title="16 classes have 0% coverage" alt="" nohref="nohref"/>
+</map>
+            </div>
+        </div>
+        
+                <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Class Complexity</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <div style="text-align: center">
+                    <img src="img/classComplexityChart.png" alt="img/classComplexityChart.png" usemap="#classComplexityChart.png"/>
+                </div>
+                <map id="classComplexityChart.png" name="classComplexityChart.png">
+<area shape="poly" coords="54,203,52,205,49,203,52,200,54,203,54,203" title="Complexity: 1; Coverage: 0%; Class: script@AddonConfig.groovy" alt="" href="com/apprenda/integrations/urbancode/AddonConfig.html#script@AddonConfig.groovy"/>
+<area shape="poly" coords="54,118,52,120,49,118,52,115,54,118,54,118" title="Complexity: 18; Coverage: 0%; Class: DeployApp" alt="" href="com/apprenda/integrations/urbancode/DeployApp.html#DeployApp"/>
+<area shape="poly" coords="54,203,52,205,49,203,52,200,54,203,54,203" title="Complexity: 1; Coverage: 0%; Class: script@AddonConfig.groovy" alt="" href="com/apprenda/integrations/urbancode/AddonConfig.html#script@AddonConfig.groovy"/>
+<area shape="poly" coords="54,198,52,200,49,198,52,195,54,198,54,198" title="Complexity: 2; Coverage: 0%; Class: script@PackageApprendaApp.groovy" alt="" href="com/apprenda/integrations/urbancode/PackageApprendaApp.html#script@PackageApprendaApp.groovy"/>
+<area shape="poly" coords="54,203,52,205,49,203,52,200,54,203,54,203" title="Complexity: 1; Coverage: 0%; Class: script@AddonConfig.groovy" alt="" href="com/apprenda/integrations/urbancode/AddonConfig.html#script@AddonConfig.groovy"/>
+<area shape="poly" coords="294,173,292,175,289,173,292,170,294,173,294,173" title="Complexity: 7; Coverage: 96%; Class: ApprendaClient" alt="" href="com/apprenda/integrations/urbancode/util/ApprendaClient.html#ApprendaClient"/>
+<area shape="poly" coords="304,203,302,205,299,203,302,200,304,203,304,203" title="Complexity: 1; Coverage: 100%; Class: Constants" alt="" href="com/apprenda/integrations/urbancode/util/Constants.html#Constants"/>
+<area shape="poly" coords="54,143,52,145,49,143,52,140,54,143,54,143" title="Complexity: 13; Coverage: 0%; Class: AirPluginTool" alt="" href="com/urbancode/air/AirPluginTool.html#AirPluginTool"/>
+<area shape="poly" coords="54,18,52,20,49,18,52,15,54,18,54,18" title="Complexity: 38; Coverage: 0%; Class: CommandHelper" alt="" href="com/urbancode/air/CommandHelper.html#CommandHelper"/>
+<area shape="poly" coords="54,178,52,180,49,178,52,175,54,178,54,178" title="Complexity: 6; Coverage: 0%; Class: DateParser" alt="" href="com/urbancode/air/DateParser.html#DateParser"/>
+<area shape="poly" coords="54,188,52,190,49,188,52,185,54,188,54,188" title="Complexity: 4; Coverage: 0%; Class: ExitCodeException" alt="" href="com/urbancode/air/ExitCodeException.html#ExitCodeException"/>
+<area shape="poly" coords="54,53,52,55,49,53,52,50,54,53,54,53" title="Complexity: 31; Coverage: 0%; Class: FileSet" alt="" href="com/urbancode/air/FileSet.html#FileSet"/>
+<area shape="poly" coords="54,168,52,170,49,168,52,165,54,168,54,168" title="Complexity: 8; Coverage: 0%; Class: Folder" alt="" href="com/urbancode/air/Folder.html#Folder"/>
+<area shape="poly" coords="54,58,52,60,49,58,52,55,54,58,54,58" title="Complexity: 30; Coverage: 0%; Class: GsonToObject" alt="" href="com/urbancode/air/GsonToObject.html#GsonToObject"/>
+<area shape="poly" coords="54,188,52,190,49,188,52,185,54,188,54,188" title="Complexity: 4; Coverage: 0%; Class: ExitCodeException" alt="" href="com/urbancode/air/ExitCodeException.html#ExitCodeException"/>
+<area shape="poly" coords="54,188,52,190,49,188,52,185,54,188,54,188" title="Complexity: 4; Coverage: 0%; Class: ExitCodeException" alt="" href="com/urbancode/air/ExitCodeException.html#ExitCodeException"/>
+<area shape="poly" coords="54,183,52,185,49,183,52,180,54,183,54,183" title="Complexity: 5; Coverage: 0%; Class: XTrustProvider" alt="" href="com/urbancode/air/XTrustProvider.html#XTrustProvider"/>
+<area shape="poly" coords="54,138,52,140,49,138,52,135,54,138,54,138" title="Complexity: 14; Coverage: 0%; Class: script@TestVersions.groovy" alt="" href="com/urbancode/air/test/TestVersions.html#script@TestVersions.groovy"/>
+</map>
+            </div>
+        </div>
+        
+                    <div class="dashboard-widget">
+                <header class="dashboard-widget-header">
+                    <h3>Coverage tree map</h3>
+                </header>
+                <div class="dashboard-widget-content">
+                    <div id="infovis" style="width:100%; height:250px;">
+                        <div id="treemap-loader" style="position:relative;top:50px;">
+                            <p>
+                                Generating Coverage Tree Map. Please wait...
+                            </p>
+                            <p>
+                                <img src="img/ajax-loader.gif" alt="Loading Treemap"/>
+                            </p>
+                        </div>
+                    </div>
+                    <p><a href="treemap.html">See more</a></p>
+                </div>
+
+            </div>
+            </div>
+
+
+    <div class="aui-item">
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Top 18 project risks</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                
+                                                                <a class="tag" href="com/apprenda/integrations/urbancode/DeployApp.html"
+                            style="font-size: 28px;color:#d04437"
+                            title="Average Method Complexity - 18 , Coverage - 0% ">DeployApp</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/test/TestVersions.html"
+                            style="font-size: 24px;color:#d04437"
+                            title="Average Method Complexity - 14 , Coverage - 0% ">script@TestVersions.groovy</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/FileSet.html"
+                            style="font-size: 14px;color:#d04437"
+                            title="Average Method Complexity - 3.1 , Coverage - 0% ">FileSet</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/GsonToObject.html"
+                            style="font-size: 14px;color:#d04437"
+                            title="Average Method Complexity - 2.727 , Coverage - 0% ">GsonToObject</a>
+                                    
+                                                                <a class="tag" href="com/apprenda/integrations/urbancode/util/ApprendaClient.html"
+                            style="font-size: 13px;color:#89c495"
+                            title="Average Method Complexity - 1.75 , Coverage - 96.4% ">ApprendaClient</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/CommandHelper.html"
+                            style="font-size: 13px;color:#d04437"
+                            title="Average Method Complexity - 2.235 , Coverage - 0% ">CommandHelper</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/DateParser.html"
+                            style="font-size: 13px;color:#d04437"
+                            title="Average Method Complexity - 2 , Coverage - 0% ">DateParser</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/Folder.html"
+                            style="font-size: 13px;color:#d04437"
+                            title="Average Method Complexity - 2 , Coverage - 0% ">Folder</a>
+                                    
+                                                                <a class="tag" href="com/apprenda/integrations/urbancode/PackageApprendaApp.html"
+                            style="font-size: 13px;color:#d04437"
+                            title="Average Method Complexity - 2 , Coverage - 0% ">script@PackageApprendaApp.groovy</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/XTrustProvider.html"
+                            style="font-size: 13px;color:#d04437"
+                            title="Average Method Complexity - 1.667 , Coverage - 0% ">XTrustProvider</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/AirPluginTool.html"
+                            style="font-size: 13px;color:#d04437"
+                            title="Average Method Complexity - 1.3 , Coverage - 0% ">AirPluginTool</a>
+                                    
+                                                                <a class="tag" href="com/apprenda/integrations/urbancode/AddonConfig.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">script@AddonConfig.groovy</a>
+                                    
+                                                                <a class="tag" href="com/apprenda/integrations/urbancode/NewApp.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">script@NewApp.groovy</a>
+                                    
+                                                                <a class="tag" href="com/apprenda/integrations/urbancode/ScaleApp.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">script@ScaleApp.groovy</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/XTrustManagerFactory.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">XTrustManagerFactory</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/ExitCodeException.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">ExitCodeException</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/OpenX509TrustManager.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">OpenX509TrustManager</a>
+                                    
+                                                                <a class="tag" href="com/urbancode/air/NewApp.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 0 , Coverage -  -  ">NewApp</a>
+                                                    <p><a href="top-risks.html">See more</a></p>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Most complex packages</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                
+                <table class="aui">
+                                            
+                                                <tr>
+                            <td>1. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a href="com/urbancode/air/pkg-summary.html">com.urbancode.air</a>
+                                <span class="aui-badge" title="Package complexity">143</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>2. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a href="com/apprenda/integrations/urbancode/pkg-summary.html">com.apprenda.integrations.urbancode</a>
+                                <span class="aui-badge" title="Package complexity">23</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>3. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a href="com/urbancode/air/test/pkg-summary.html">com.urbancode.air.test</a>
+                                <span class="aui-badge" title="Package complexity">14</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>4. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.9655172</span>96.6%</div><div style="display: table-cell">
+ <div title="96.6% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:96.6%"></div></div></div></div></td>
+                            <td>
+                                <a href="com/apprenda/integrations/urbancode/util/pkg-summary.html">com.apprenda.integrations.urbancode.util</a>
+                                <span class="aui-badge" title="Package complexity">8</span>
+                            </td>
+                        </tr>
+                                    </table>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Most complex classes</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <table class="aui">
+                                            
+                                                <tr>
+                            <td>1. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a  href="com/urbancode/air/CommandHelper.html"  title="com.urbancode.air.CommandHelper">CommandHelper</a>
+                                <span class="aui-badge" title="Class complexity">38</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>2. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a  href="com/urbancode/air/FileSet.html"  title="com.urbancode.air.FileSet">FileSet</a>
+                                <span class="aui-badge" title="Class complexity">31</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>3. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a  href="com/urbancode/air/GsonToObject.html"  title="com.urbancode.air.GsonToObject">GsonToObject</a>
+                                <span class="aui-badge" title="Class complexity">30</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>4. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a  href="com/apprenda/integrations/urbancode/DeployApp.html"  title="com.apprenda.integrations.urbancode.DeployApp">DeployApp</a>
+                                <span class="aui-badge" title="Class complexity">18</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>5. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a  href="com/urbancode/air/test/TestVersions.html"  title="com.urbancode.air.test.script@TestVersions.groovy">script@TestVersions.groovy</a>
+                                <span class="aui-badge" title="Class complexity">14</span>
+                            </td>
+                        </tr>
+                                    </table>
+            </div>
+        </div>
+
+                <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Least tested methods</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <table class="aui">
+                                            
+
+                    <tr>
+                        <td align="right">1.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="DeployApp.main(String)&#160;:&#160;void" href="com/apprenda/integrations/urbancode/DeployApp.html?line=10#src-10">DeployApp.main(String)&#160;:&#160;void</a>
+                            <span class="aui-badge" title="Method complexity">18</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">2.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="script@TestVersions.groovy.script()&#160;:&#160;def" href="com/urbancode/air/test/TestVersions.html?line=3#src-3">script@TestVersions.groovy.script()&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">14</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">3.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="CommandHelper.runCommand(def,def,Closure,String)&#160;:&#160;int" href="com/urbancode/air/CommandHelper.html?line=160#src-160">CommandHelper.runCommand(def,def,Closure,String)&#160;:&#160;int</a>
+                            <span class="aui-badge" title="Method complexity">9</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">4.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="GsonToObject.toObject(JsonElement)&#160;:&#160;Object" href="com/urbancode/air/GsonToObject.html?line=40#src-40">GsonToObject.toObject(JsonElement)&#160;:&#160;Object</a>
+                            <span class="aui-badge" title="Method complexity">8</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">5.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="GsonToObject.toSmallestIntegerType(Number)&#160;:&#160;Number" href="com/urbancode/air/GsonToObject.html?line=85#src-85">GsonToObject.toSmallestIntegerType(Number)&#160;:&#160;Number</a>
+                            <span class="aui-badge" title="Method complexity">13</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">6.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="FileSet.convertToPattern(def)&#160;:&#160;def" href="com/urbancode/air/FileSet.html?line=109#src-109">FileSet.convertToPattern(def)&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">4</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">7.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="FileSet.each(Closure)&#160;:&#160;def" href="com/urbancode/air/FileSet.html?line=65#src-65">FileSet.each(Closure)&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">7</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">8.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="script@AddonConfig.groovy.script()&#160;:&#160;def" href="com/apprenda/integrations/urbancode/AddonConfig.html?line=7#src-7">script@AddonConfig.groovy.script()&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">9.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="FileSet.forNonEmptyLines(def,Closure)&#160;:&#160;def" href="com/urbancode/air/FileSet.html?line=95#src-95">FileSet.forNonEmptyLines(def,Closure)&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">9</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">10.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="script@NewApp.groovy.script()&#160;:&#160;def" href="com/apprenda/integrations/urbancode/NewApp.html?line=13#src-13">script@NewApp.groovy.script()&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">11.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="script@ScaleApp.groovy.script()&#160;:&#160;def" href="com/apprenda/integrations/urbancode/ScaleApp.html?line=14#src-14">script@ScaleApp.groovy.script()&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">12.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="DateParser.parseDate(String)&#160;:&#160;Date" href="com/urbancode/air/DateParser.html?line=52#src-52">DateParser.parseDate(String)&#160;:&#160;Date</a>
+                            <span class="aui-badge" title="Method complexity">4</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">13.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="CommandHelper.requiresDisplayQuotes(String)&#160;:&#160;boolean" href="com/urbancode/air/CommandHelper.html?line=235#src-235">CommandHelper.requiresDisplayQuotes(String)&#160;:&#160;boolean</a>
+                            <span class="aui-badge" title="Method complexity">6</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">14.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="AirPluginTool.getStepProperties()&#160;:&#160;Properties" href="com/urbancode/air/AirPluginTool.html?line=40#src-40">AirPluginTool.getStepProperties()&#160;:&#160;Properties</a>
+                            <span class="aui-badge" title="Method complexity">2</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">15.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="script@PackageApprendaApp.groovy.script()&#160;:&#160;def" href="com/apprenda/integrations/urbancode/PackageApprendaApp.html?line=12#src-12">script@PackageApprendaApp.groovy.script()&#160;:&#160;def</a>
+                            <span class="aui-badge" title="Method complexity">2</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">16.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="FileSet.&lt;init&gt;(def)&#160;:&#160;void" href="com/urbancode/air/FileSet.html?line=41#src-41">FileSet.&lt;init&gt;(def)&#160;:&#160;void</a>
+                            <span class="aui-badge" title="Method complexity">5</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">17.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="AirPluginTool.setOutputProperties()&#160;:&#160;void" href="com/urbancode/air/AirPluginTool.html?line=61#src-61">AirPluginTool.setOutputProperties()&#160;:&#160;void</a>
+                            <span class="aui-badge" title="Method complexity">3</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">18.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="CommandHelper.sanitizeExecutable(String)&#160;:&#160;String" href="com/urbancode/air/CommandHelper.html?line=275#src-275">CommandHelper.sanitizeExecutable(String)&#160;:&#160;String</a>
+                            <span class="aui-badge" title="Method complexity">2</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">19.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="CommandHelper.printEnvironmentVariables()&#160;:&#160;void" href="com/urbancode/air/CommandHelper.html?line=266#src-266">CommandHelper.printEnvironmentVariables()&#160;:&#160;void</a>
+                            <span class="aui-badge" title="Method complexity">3</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">20.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="Folder.equals(Object)&#160;:&#160;boolean" href="com/urbancode/air/Folder.html?line=29#src-29">Folder.equals(Object)&#160;:&#160;boolean</a>
+                            <span class="aui-badge" title="Method complexity">5</span>
+
+                        </td>
+                    </tr>
+                                    </table>
+            </div>
+        </div>
+        
+    </div>
+</div>
+                            </div> <!-- tabs-pane active-pane -->
+                        </div>
+
+    <script type="text/javascript" src="jit.js" ></script>
+    <script type="text/javascript" src="treemap-dash-json.js" ></script>
+
+                        </div> <!-- class="aui-page-panel-content-clover" -->
+                    <footer id="footer" role="contentinfo">
+    <section class="footer-body">
+        <ul>
+            <li>
+                Report generated by <a target="_new" href="http://www.atlassian.com/software/clover">Atlassian Clover</a> v 4.0.6
+                on Fri Oct 30 2015 14:53:50 EDT using coverage data from Fri Oct 30 2015 14:53:50 EDT.
+            </li>
+        </ul>
+        <ul>
+            <li>Clover: Evaluation License registered to AppendaProduct. You have 27 day(s) before your license expires.</li>
+        </ul>
+        <div id="footer-logo">
+            <a target="_blank" href="http://www.atlassian.com/">
+                Atlassian
+            </a>
+        </div>
+    </section>
+</footer>                </section> <!-- class="aui-page-panel-content" -->
+            </div> <!-- class="aui-page-panel-inner" -->
+        </div> <!-- class="aui-page-panel" -->
+    </div> <!-- id="page" -->
+</body>
+</html>
