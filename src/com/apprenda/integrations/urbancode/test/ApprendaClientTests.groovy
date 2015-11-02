@@ -130,5 +130,7 @@ class ApprendaClientTests extends Specification {
 			promote3.status == 200
 			promote4.status == 200
 			// we'll do tests with the data later.
+		cleanup:
+			def deleteResponse = ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
 }

@@ -105,6 +105,10 @@ class ApprendaClient {
 		return demoteVersion
 	}
 
+	static def NewApplication(props)
+	{
+		return NewApplication(props, 'v1')
+	}
 	
 	static def NewApplication(props, version)
 	{
