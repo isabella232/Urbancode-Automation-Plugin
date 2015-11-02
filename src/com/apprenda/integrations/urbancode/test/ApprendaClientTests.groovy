@@ -31,6 +31,14 @@ class ApprendaClientTests extends Specification {
 			data.alias == 'apprendazon'
 	}
 	
+	def TestGetVersionInfo()
+	{
+		setup:
+			def data = ApprendaClient.GetVersionInfo(testProperties)
+		expect:
+			data != null
+	}
+	
 	def TestNewApplication()
 	{
 		// test new app creation and then test to make sure app got created
@@ -97,4 +105,30 @@ class ApprendaClientTests extends Specification {
 			def deleteResponse = ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
 
+	def TestPostNewVersionApplication()
+	{
+		setup:
+			def promoteAppProperties = testProperties
+			promoteAppProperties.AppAlias = 'promoteApplication'
+			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
+			def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
+			def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
+			def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			def newVersion = ApprendaClient.PostNewVersion(promoteAppProperties, 'v2')
+			def patch2 = ApprendaClient.PatchApplication(promoteAppProperties, 'v2')
+			def promote3 = ApprendaClient.Promote(promoteAppProperties, 'v2')
+			def data3 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			def promote4 = ApprendaClient.Promote(promoteAppProperties, 'v2')
+			def data4 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+		expect:
+			response.status == 201
+			promote.status == 200
+			promote2.status == 200
+			newVersion.status == 201
+			promote3.status == 200
+			promote4.status == 200
+			// we'll do tests with the data later.
+	}
 }

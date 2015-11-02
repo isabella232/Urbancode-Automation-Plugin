@@ -104,11 +104,7 @@ class ApprendaClient {
 		println demoteVersion.getData()
 		return demoteVersion
 	}
-	
-	static def Archive(props, version)
-	{
-		
-	}
+
 	
 	static def NewApplication(props, version)
 	{
