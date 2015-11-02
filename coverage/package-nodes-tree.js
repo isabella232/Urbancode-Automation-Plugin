@@ -31,7 +31,7 @@ var Packages = {
     "text": "test",
     "package": "com.apprenda.integrations.urbancode.test",
     "url": "com/apprenda/integrations/urbancode/test/testsrc-pkg-summary.html",
-            "coverage": "90%",
+            "coverage": "96.2%",
         "icon": "aui-icon aui-icon-small aui-iconfont-devtools-folder-closed",
             "li_attr": {"data-is-link": "true"},
         "a_attr": {"href": "com/apprenda/integrations/urbancode/test/testsrc-pkg-summary.html"},
@@ -45,7 +45,7 @@ var Packages = {
     "text": "util",
     "package": "com.apprenda.integrations.urbancode.util",
     "url": "com/apprenda/integrations/urbancode/util/pkg-summary.html",
-            "coverage": "96.6%",
+            "coverage": "81.8%",
         "icon": "aui-icon aui-icon-small aui-iconfont-devtools-folder-closed",
             "li_attr": {"data-is-link": "true"},
         "a_attr": {"href": "com/apprenda/integrations/urbancode/util/pkg-summary.html"},
@@ -66,21 +66,7 @@ var Packages = {
             "li_attr": {"data-is-link": "true"},
         "a_attr": {"href": "com/urbancode/air/pkg-summary.html"},
     "children": [
-                                            
-                
-{
-    "id": "com.urbancode.air.test",
-    "text": "test",
-    "package": "com.urbancode.air.test",
-    "url": "com/urbancode/air/test/pkg-summary.html",
-            "coverage": "0%",
-        "icon": "aui-icon aui-icon-small aui-iconfont-devtools-folder-closed",
-            "li_attr": {"data-is-link": "true"},
-        "a_attr": {"href": "com/urbancode/air/test/pkg-summary.html"},
-    "children": [
                     ]
-},
-            ]
 },
             ]
 },

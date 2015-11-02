@@ -12,33 +12,19 @@ public class DeployAppTests extends Specification {
 		SelfSignedFlag:true,
 		AppAlias:'apprendazon']
 	
-	// First tests relate to make sure our Apprenda Client is working properly.
-	def TestApprendaClientInstantiation()
-	{
-		setup:
-			def test = ApprendaClient.getInstance(testProperties)
-		expect:
-			test.defaultRequestHeaders != null
-			test.defaultRequestHeaders.'ApprendaSessionToken' != null
-	}
 	
-	def TestGetApplicationInfo()
-	{
-		setup:
-			def data = ApprendaClient.GetApplicationInfo(testProperties)
-		expect:
-			data.alias == 'apprendazon'
-	}
-	
-	// 
+	// these tests are more functional than anything else but we should run these
+	// as smoke tests
 	def DeployAppTestSandbox() {
 		setup: 
 			def app = ApprendaClient.GetApplicationInfo(testProperties)
-		
 	}
 	
 	def DeployAppTestPublished() {
 		
 	}
-
+	
+	def DeployAppTwoVersions(){
+	
+	}
 }

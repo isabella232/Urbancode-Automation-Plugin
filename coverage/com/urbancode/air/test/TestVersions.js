@@ -7,4 +7,4 @@ clover.pageData = {"classes":[{"el":58,"id":529,"methods":[{"el":-1,"sc":2,"sl":
 clover.testTargets = {}
 
 // JSON: { lines : [{tests : [testid1, testid2, testid3, ...]}, ...]};
-clover.srcFileLines = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+clover.srcFileLines = $jsonSrcFileLines

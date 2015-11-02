@@ -22,7 +22,10 @@
 		<available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
 		<taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
 		
-		<target name="with.clover"> <clover-setup/> </target>
+		<target name="with.clover"> 
+			<clover-clean />
+			<clover-setup /> 
+		</target>
 		
 		<target name="clover.html">
 			<clover-html-report outdir="coverage" />

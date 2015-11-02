@@ -48,11 +48,18 @@ class ApprendaClient {
 	
 	static def GetApplicationInfo(props)
 	{
-		// implement self-healing
-		getInstance(props)
-		def getApps = client.get(path:'/developer/api/v1/apps/' + props.AppAlias)
-		//println getApps.getData()
-		return getApps.getData()
+		try
+		{
+			// implement self-healing
+			getInstance(props)
+			def getApps = client.get(path:'/developer/api/v1/apps/' + props.AppAlias)
+			println getApps.getData()
+			return getApps.getData()
+		}
+		catch(Exception e)
+		{
+			
+		}
 	}
 	
 	static def GetVersionInfo(props)
@@ -79,18 +86,23 @@ class ApprendaClient {
 		def patchApp = client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + props.Stage, body:archive.bytes, requestContentType:BINARY)
 		println patchApp.status
 		println patchApp.getData()
+		return patchApp
 	}
 	
 	static def Promote(props, version)
 	{
-		
+		def promoteVersion = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=promote")
+		println promoteVersion.status
+		println promoteVersion.getData()
+		return promoteVersion
 	}
 	
 	static def Demote(props, version)
 	{
-		def demoteVersion = client.post(path: Constants.REST_API_PATHS.Demote + props.AppAlias + "/" + version + "?action=demote")
+		def demoteVersion = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=demote")
 		println demoteVersion.status
 		println demoteVersion.getData()
+		return demoteVersion
 	}
 	
 	static def Archive(props, version)
@@ -101,8 +113,15 @@ class ApprendaClient {
 	static def NewApplication(props, version)
 	{
 		def reqbody = ["Name":props.AppAlias,"Alias":props.AppAlias,"Description":"Created by Apprenda|UrbanCode Deploy"]
-		def newApplication = client.post(path:Constants.REST_API_PATHS.NewApplication, body:reqbody)
+		def newApplication = client.post(path:Constants.REST_API_PATHS.NewApplication, body:reqbody, requestContentType:JSON)
 		println newApplication.status
 		println newApplication.getData()
+		return newApplication
+	}
+	
+	static def DeleteApplication(props)
+	{
+		def deleteApp = client.delete(path:Constants.REST_API_PATHS.DeleteApplication + "/" + props.AppAlias)
+		return deleteApp
 	}
 }

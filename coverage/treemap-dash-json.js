@@ -1,19 +1,17 @@
-var treeMapJson = {"id":"Clover database Fri Oct 30 2015 14:53:47 EDT0","name":"","data":{
-    "$area":580.0,"$color":4.827586,"title":" 580 Elements, 4.8% Coverage"},
-  "children":[{"id":"com.urbancode.air.test529","name":
-      "com.urbancode.air.test","data":{"$area":63.0,"$color":0.0,"title":
-        "com.urbancode.air.test 63 Elements, 0% Coverage"},"children":[]},{
-      "id":"com.urbancode.air179","name":"com.urbancode.air","data":{"$area":
+var treeMapJson = {"id":"Clover database Mon Nov 2 2015 12:59:26 EST0","name":"","data":{
+    "$area":528.0,"$color":10.227273,"title":
+    " 528 Elements, 10.2% Coverage"},"children":[{"id":
+      "com.urbancode.air230","name":"com.urbancode.air","data":{"$area":
         350.0,"$color":0.0,"title":
         "com.urbancode.air 350 Elements, 0% Coverage"},"children":[]},{"id":
-      "com.apprenda.integrations.urbancode.util178","name":
-      "com.apprenda.integrations.urbancode.util","data":{"$area":29.0,
-        "$color":96.55172,"title":
-        "com.apprenda.integrations.urbancode.util 29 Elements, 96.6% Coverage"},
+      "com.apprenda.integrations.urbancode.util164","name":
+      "com.apprenda.integrations.urbancode.util","data":{"$area":66.0,
+        "$color":81.818184,"title":
+        "com.apprenda.integrations.urbancode.util 66 Elements, 81.8% Coverage"},
       "children":[]},{"id":"com.apprenda.integrations.urbancode0","name":
-      "com.apprenda.integrations.urbancode","data":{"$area":138.0,"$color":
+      "com.apprenda.integrations.urbancode","data":{"$area":112.0,"$color":
         0.0,"title":
-        "com.apprenda.integrations.urbancode 138 Elements, 0% Coverage"},
+        "com.apprenda.integrations.urbancode 112 Elements, 0% Coverage"},
       "children":[]}]}
 ;
 processTreeMapDashJson (treeMapJson);
