@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.apprenda.integrations.urbancode.util
+package com.apprenda.integrations.urbancode
 
 /**
  * @author cdutra

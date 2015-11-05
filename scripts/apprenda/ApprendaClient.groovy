@@ -2,9 +2,8 @@
  * Groovy-based Apprenda REST API Wrapper
  * Author: Chris Dutra
  */
-package com.apprenda.integrations.urbancode.util;
+package com.apprenda.integrations.urbancode;
 import groovyx.net.http.RESTClient
-
 import static groovyx.net.http.ContentType.*
 
 class ApprendaClient {
@@ -21,6 +20,8 @@ class ApprendaClient {
 	
 	private static def init(props)
 	{
+		try
+		{
 		println props
 		def client = new RESTClient(props.ApprendaURL)
 		// this suppresses a failure message, we'll handle it separately
@@ -44,6 +45,11 @@ class ApprendaClient {
 		client.defaultRequestHeaders.'ApprendaSessionToken' = token
 		println "Authentication Routine Complete"
 		return client
+		}
+		catch (Exception e)
+		{
+			println "Caught error during initialization: " + e
+		}
 	}
 	
 	static def GetApplicationInfo(props)
@@ -82,6 +88,7 @@ class ApprendaClient {
 	
 	static def PatchApplication(props, version)
 	{
+		getInstance(props)
 		def archive = new File(props.ArchiveLocation)
 		def patchApp = client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + props.Stage, body:archive.bytes, requestContentType:BINARY)
 		println patchApp.status
@@ -91,6 +98,7 @@ class ApprendaClient {
 	
 	static def Promote(props, version)
 	{
+		getInstance(props)
 		def promoteVersion = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=promote")
 		println promoteVersion.status
 		println promoteVersion.getData()
@@ -99,6 +107,7 @@ class ApprendaClient {
 	
 	static def Demote(props, version)
 	{
+		getInstance(props)
 		def demoteVersion = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=demote")
 		println demoteVersion.status
 		println demoteVersion.getData()
@@ -112,6 +121,7 @@ class ApprendaClient {
 	
 	static def NewApplication(props, version)
 	{
+		getInstance(props)
 		def reqbody = ["Name":props.AppAlias,"Alias":props.AppAlias,"Description":"Created by Apprenda|UrbanCode Deploy"]
 		def newApplication = client.post(path:Constants.REST_API_PATHS.NewApplication, body:reqbody, requestContentType:JSON)
 		println newApplication.status
@@ -121,6 +131,7 @@ class ApprendaClient {
 	
 	static def DeleteApplication(props)
 	{
+		getInstance(props)
 		def deleteApp = client.delete(path:Constants.REST_API_PATHS.DeleteApplication + "/" + props.AppAlias)
 		return deleteApp
 	}

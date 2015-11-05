@@ -1,27 +1,35 @@
 package com.apprenda.integrations.urbancode
-import groovyx.net.http.RESTClient
-import com.apprenda.integrations.urbancode.util.ApprendaClient
-import com.apprenda.integrations.urbancode.util.Constants
-import com.urbancode.air.AirPluginTool
-import static groovyx.net.http.ContentType.*
+import jdk.internal.dynalink.beans.CallerSensitiveDetector.DetectionStrategy
 
-public class DeployApp {
-	private def detectVersion(versionInfo)
+import com.urbancode.air.AirPluginTool
+
+public class InternalDeployApp {
+	
+	def detectVersion(versionInfo, props)
 	{
-		println "Begin smart version detection"
+		// use case 4: 
+		// [alias:uc4, currentVersion:[alias:v1, stage:Published]]
+		// [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc4', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
+		// [[alias:v1, stage:Published], [alias:v2, stage:Definition]]
 		def newVersionRequired = false
 		def targetVersion = versionInfo.currentVersion.alias
 		def newVerStage = versionInfo.currentVersion.stage
-		// so if we aren't just a v1 in definition / sandbox, we have some work to do.
-		if(versionInfo.currentVersion.stage == 'Published')
+		// case: current version is either in definition or sandbox (guarantees we are working with v1)
+		if(versionInfo.currentVersion.stage == 'Definition' || versionInfo.currentVersion.stage == 'Sandbox')
+		{
+			return [newVersionRequired:false, targetVersion:'v1', newVerStage:versionInfo.currentVersion.stage]
+		}
+		// case: the current version is published.
+		else if(versionInfo.currentVersion.stage == 'Published')
 		{
 			def oldVerNo = versionInfo.currentVersion.alias.substring(1).toInteger()
 			def newVerNo = oldVerNo
 			println "DEBUG: oldVerNo: " + oldVerNo + " newVerNo: " + newVerNo
 			
 			def versions = ApprendaClient.GetVersionInfo(props)
+			println versions
 			versions.each { version ->
-				def verNo = versioninfo.currentVersion.alias.substring(1).toInteger()
+				def verNo = version.alias.substring(1).toInteger()
 				if (newVerNo < verNo) {
 					newVerNo = verNo
 					// get stage. if we're in sandbox, we have to demote
@@ -42,32 +50,33 @@ public class DeployApp {
 			targetVersion = "v" + newVerNo.toString()
 			return [newVersionRequired:newVersionRequired, targetVersion:targetVersion, newVerStage:newVerStage]
 		}
-	}
-	
-	public static void main(String args)
-	{
-		final def apTool = new AirPluginTool(this.args[0], this.args[1])
-		final def props = apTool.getStepProperties()
-		try {
-			def getApps = ApprendaClient.getApplicationInfo(props)
-			def versionOutput = detectVersion(getApps)
-			if(versionOutput.newVersionRequired) {
-				ApprendaClient.PostNewVersion(props, versionOutput.targetVersion)
-			}
-			else
-			if(getApps.currentVersion.stage == 'Sandbox' || versionOutput.newVerStage == 'Sandbox')
-			{
-				println "Target version is in Sandbox stage. Demoting to defintion to begin patching..."
-				ApprendaClient.Demote(props, versionOutput.targetVersion)	
-			}
-			ApprendaClient.PatchApplication(props, versionOutput.targetVersion)
+		else
+		{
+			throw new Exception("We received data we didn't expect.")
 		}
-		catch (Exception e) {
-			println "Error during deployment to Apprenda"
-			println  e.message
-			e.printStackTrace()
-			System.exit 1
-		}
-		System.exit 0
 	}
 }
+	final def apTool = new AirPluginTool(this.args[0], this.args[1])
+	props = apTool.getStepProperties()
+	try {
+		internal = new InternalDeployApp()
+		def getApps = ApprendaClient.GetApplicationInfo(props)
+		def versionOutput = internal.detectVersion(getApps, props)
+		if(versionOutput.newVersionRequired) {
+			ApprendaClient.PostNewVersion(props, versionOutput.targetVersion)
+		}
+		else
+		if(getApps.currentVersion.stage == 'Sandbox' || versionOutput.newVerStage == 'Sandbox')
+		{
+			println "Target version is in Sandbox stage. Demoting to defintion to begin patching..."
+			ApprendaClient.Demote(props, versionOutput.targetVersion)	
+		}
+		ApprendaClient.PatchApplication(props, versionOutput.targetVersion)
+	}
+	catch (Exception e) {
+		println "Error during deployment to Apprenda"
+		println  e.message
+		e.printStackTrace()
+		System.exit 1
+	}
+	System.exit 0

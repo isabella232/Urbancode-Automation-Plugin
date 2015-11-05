@@ -16,7 +16,7 @@
 		<property name="scripts.dir" value="${basedir}/scripts" />
 		<property name="imports.dir" value="${basedir}/imports" />
 		<property name="maven.ant.tasks.url" value="http://mirror.sdunix.com/apache/maven/ant-tasks/2.1.3/binaries/maven-ant-tasks-2.1.3.jar" />
-		<property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.1.3.jar" />
+		<property name="maven.ant.tasks.jar" value="${basedir}/testlib/maven-ant-tasks-2.1.3.jar" />
 		<property name="clover.jar" value="C:\Users\cdutra\Documents\clover-ant-4.0.6\clover-ant-4.0.6\lib\clover.jar"/>
 		
 		<available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
@@ -43,7 +43,12 @@
 		</target>
 		
 		<target name="copyDependencies">
-
+			<!-- Copy Apprenda Source to scripts folder -->
+			<copy todir="${scripts.dir}/apprenda">
+				<fileset dir="${src.dir}/com/apprenda/integrations/urbancode">
+				</fileset>
+			</copy>				
+			
 			<!-- inputs (info, upgrade) -->
 			<copy todir="${build.dir}">
 				<fileset dir="${plugin.dir}">
