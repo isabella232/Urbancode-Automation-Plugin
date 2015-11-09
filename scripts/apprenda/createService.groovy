@@ -28,11 +28,14 @@ catch (IOException e) {
 final def api = props['api'];
 final def user = props['user'];
 final def password = props['password'];
-final def selfSigned = props['selfSigned'];
+final def selfSigned = props['selfSigned']
 final def org = props['org'];
 final def space = props['space'];
-final def app = props['app'];
-
+final def name = props['name'];
+final def service = props['service'];
+final def plan = props['plan'];
+// since CF doesn't appear to work correctly
+final def CF_PATH = props['pathToCF']
 def commandHelper = new CommandHelper(workDir);
 
 // Setup path
@@ -53,7 +56,7 @@ try {
 
 // Set cf api
 try {
-	def commandArgs = ["cf", "api", api];
+	def commandArgs = [CF_PATH, "api", api];
     if (selfSigned) {
         commandArgs << "--skip-ssl-validation"
     }
@@ -65,7 +68,7 @@ try {
 
 // Authenticate with user and password
 try {
-	def commandArgs = ["cf", "auth", user, password];
+	def commandArgs = [CF_PATH, "auth", user, password];
 	commandHelper.runCommand("Authenticating with CloudFoundry", commandArgs);
 } catch(Exception e){
 	println "ERROR authenticating : ${e.message}"
@@ -74,7 +77,7 @@ try {
 
 // Set target org
 try {
-	def commandArgs = ["cf", "target", "-o", org];
+	def commandArgs = [CF_PATH, "target", "-o", org];
 	commandHelper.runCommand("Setting CloufFoundry target organization", commandArgs);
 } catch(Exception e){
 	println "ERROR setting target organization : ${e.message}"
@@ -84,7 +87,7 @@ try {
 // Ensure space exists. create-space does nothing if space
 // exists
 try {
-	def commandArgs = ["cf", "create-space", space];
+	def commandArgs = [CF_PATH, "create-space", space];
 	commandHelper.runCommand("Creating CloufFoundry space", commandArgs);
 } catch(Exception e){
 	println "ERROR creating space : ${e.message}"
@@ -93,25 +96,25 @@ try {
 
 // Set target space
 try {
-	def commandArgs = ["cf", "target", "-s", space];
+	def commandArgs = [CF_PATH, "target", "-s", space];
 	commandHelper.runCommand("Setting CloufFoundry target space", commandArgs);
 } catch(Exception e){
 	println "ERROR setting target space : ${e.message}"
 	System.exit(1)
 }
 
-// Execute stop application
+// Execute create-service
 try {
-	def commandArgs = ["cf", "stop", app];
-	commandHelper.runCommand("Executing CF stop APP", commandArgs);
+	def commandArgs = [CF_PATH, "create-service", service, plan, name];
+	commandHelper.runCommand("Executing CF create-service", commandArgs);
 } catch(Exception e){
-	println "ERROR executing stop APP : ${e.message}";
+	println "ERROR executing create-service : ${e.message}";
 	System.exit(1);
 }
 
 // Logout
 try {
-	def commandArgs = ["cf", "logout"];
+	def commandArgs = [CF_PATH, "logout"];
 	commandHelper.runCommand("Logout from CloudFoundry system", commandArgs);
 } catch(Exception e){
 	println "ERROR logging out : ${e.message}"

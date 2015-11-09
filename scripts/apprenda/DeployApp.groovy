@@ -7,6 +7,10 @@ public class InternalDeployApp {
 	
 	def detectVersion(versionInfo, props)
 	{
+		// use case 4: 
+		// [alias:uc4, currentVersion:[alias:v1, stage:Published]]
+		// [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc4', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
+		// [[alias:v1, stage:Published], [alias:v2, stage:Definition]]
 		def newVersionRequired = false
 		def targetVersion = versionInfo.currentVersion.alias
 		def newVerStage = versionInfo.currentVersion.stage
@@ -16,15 +20,16 @@ public class InternalDeployApp {
 			return [newVersionRequired:false, targetVersion:'v1', newVerStage:versionInfo.currentVersion.stage]
 		}
 		// case: the current version is published.
-		if(versionInfo.currentVersion.stage == 'Published')
+		else if(versionInfo.currentVersion.stage == 'Published')
 		{
 			def oldVerNo = versionInfo.currentVersion.alias.substring(1).toInteger()
 			def newVerNo = oldVerNo
 			println "DEBUG: oldVerNo: " + oldVerNo + " newVerNo: " + newVerNo
 			
 			def versions = ApprendaClient.GetVersionInfo(props)
+			println versions
 			versions.each { version ->
-				def verNo = versionInfo.currentVersion.alias.substring(1).toInteger()
+				def verNo = version.alias.substring(1).toInteger()
 				if (newVerNo < verNo) {
 					newVerNo = verNo
 					// get stage. if we're in sandbox, we have to demote
@@ -44,6 +49,10 @@ public class InternalDeployApp {
 			}
 			targetVersion = "v" + newVerNo.toString()
 			return [newVersionRequired:newVersionRequired, targetVersion:targetVersion, newVerStage:newVerStage]
+		}
+		else
+		{
+			throw new Exception("We received data we didn't expect.")
 		}
 	}
 }
