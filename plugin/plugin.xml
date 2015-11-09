@@ -276,12 +276,6 @@
 	     <property name="space" required="true">
 	       <property-ui default-value="${p:resource/Bluemix_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
 	     </property>
-	     <property name="whichEnv" required="true">
-	       <property-ui description="Pick which environment to bind the service to." label="Which environment?" type="selectBox">
-	       		<value label="BlueMix">BlueMix</value>
-            	<value label="Apprenda">Apprenda</value>
-	       </property-ui>
-	     </property>
 	     <property name="application" required="true">
 	       <property-ui default-value="" description="The application name. For Apprenda apps, this is the alias" label="Application name" type="textBox"/>
 	     </property>
