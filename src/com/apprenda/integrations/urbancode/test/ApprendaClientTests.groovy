@@ -31,6 +31,16 @@ class ApprendaClientTests extends Specification {
 			data.alias == 'apprendazon'
 	}
 	
+	def TestBadGetApplicationInfo()
+	{
+		setup:
+			testProperties.AppAlias = 'aoisnfsaod'
+			def data = ApprendaClient.GetApplicationInfo(testProperties)
+			println data
+		expect:
+			data != null
+	}
+	
 	def TestGetVersionInfo()
 	{
 		setup:
@@ -133,4 +143,6 @@ class ApprendaClientTests extends Specification {
 		cleanup:
 			def deleteResponse = ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
+	
+	def TestScale
 }

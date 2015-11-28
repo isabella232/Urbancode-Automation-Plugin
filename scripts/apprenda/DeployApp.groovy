@@ -3,28 +3,27 @@ import jdk.internal.dynalink.beans.CallerSensitiveDetector.DetectionStrategy
 
 import com.urbancode.air.AirPluginTool
 
+
 public class InternalDeployApp {
-	
 	def detectVersion(versionInfo, props)
 	{
-		// use case 4: 
-		// [alias:uc4, currentVersion:[alias:v1, stage:Published]]
-		// [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc4', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-		// [[alias:v1, stage:Published], [alias:v2, stage:Definition]]
 		def newVersionRequired = false
 		def targetVersion = versionInfo.currentVersion.alias
 		def newVerStage = versionInfo.currentVersion.stage
-		// case: current version is either in definition or sandbox (guarantees we are working with v1)
 		if(versionInfo.currentVersion.stage == 'Definition' || versionInfo.currentVersion.stage == 'Sandbox')
 		{
 			return [newVersionRequired:false, targetVersion:'v1', newVerStage:versionInfo.currentVersion.stage]
 		}
-		// case: the current version is published.
 		else if(versionInfo.currentVersion.stage == 'Published')
 		{
 			def oldVerNo = versionInfo.currentVersion.alias.substring(1).toInteger()
 			def newVerNo = oldVerNo
 			println "DEBUG: oldVerNo: " + oldVerNo + " newVerNo: " + newVerNo
+			
+			// check to make sure the app exists. if not, create it.
+			def appInfo = ApprendaClient.GetApplicationInfo(props)
+			println appInfo
+			if(ap)
 			
 			def versions = ApprendaClient.GetVersionInfo(props)
 			println versions
@@ -32,7 +31,6 @@ public class InternalDeployApp {
 				def verNo = version.alias.substring(1).toInteger()
 				if (newVerNo < verNo) {
 					newVerNo = verNo
-					// get stage. if we're in sandbox, we have to demote
 					newVerStage = version.stage
 					if(newVerStage != 'Published')
 					{
@@ -56,13 +54,23 @@ public class InternalDeployApp {
 		}
 	}
 }
+
 	final def apTool = new AirPluginTool(this.args[0], this.args[1])
 	props = apTool.getStepProperties()
 	try {
 		internal = new InternalDeployApp()
 		def getApps = ApprendaClient.GetApplicationInfo(props)
+		
+		// inject here that if we don't have a new application, we need to create it.
+		if(getApps == null)
+		{
+			def newApplication = ApprendaClient.NewApplication(props)
+			// should come back now as v1 and definition
+			getApps = ApprendaClient.GetApplicationInfo(props)
+		}
 		def versionOutput = internal.detectVersion(getApps, props)
-		if(versionOutput.newVersionRequired) {
+		if(versionOutput.newVersionRequired) 
+		{
 			ApprendaClient.PostNewVersion(props, versionOutput.targetVersion)
 		}
 		else

@@ -1,7 +1,3 @@
-/**
- * Groovy-based Apprenda REST API Wrapper
- * Author: Chris Dutra
- */
 package com.apprenda.integrations.urbancode;
 import groovyx.net.http.RESTClient
 import static groovyx.net.http.ContentType.*
@@ -59,12 +55,14 @@ class ApprendaClient {
 			// implement self-healing
 			getInstance(props)
 			def getApps = client.get(path:'/developer/api/v1/apps/' + props.AppAlias)
+			println getApps.status
 			println getApps.getData()
 			return getApps.getData()
 		}
 		catch(Exception e)
 		{
-			
+			println "Error trying to retrieve applicaiton info." + e
+			return null
 		}
 	}
 	
@@ -134,5 +132,32 @@ class ApprendaClient {
 		getInstance(props)
 		def deleteApp = client.delete(path:Constants.REST_API_PATHS.DeleteApplication + "/" + props.AppAlias)
 		return deleteApp
+	}
+	
+	static def GetAddonInstanceInfo(props)
+	{
+		getInstance(props)
+		def getAddonInstance = client.getAt(path:Constants.REST_API_PATHS.GetAddonInstances + "/" + props.AddonAlias + "/" + props.AddonInstanceAlias)
+		return getAddonInstance
+	}
+	
+	// for this, we're expecting a 204 back.
+	static def SetInstanceCount(props, version)
+	{
+		getInstance(props)
+		def bodypath = Constants.REST_API_PATHS.SetInstanceCount + "/" + props.AppAlias + "/" + version + "/" + props.ComponentAlias + "/scale/" + props.InstanceCount
+		println bodypath
+		def setInstanceCount = client.post(path:bodypath)
+		return setInstanceCount
+	}
+	
+	static def GetComponentInfo(props, version)
+	{
+		getInstance(props)
+		def bodypath = Constants.REST_API_PATHS.GetComponentInfo + "/" + props.AppAlias + "/" + version
+		println bodypath
+		def getInfo = client.getAt(path:bodypath)
+		println getInfo
+		return getInfo
 	}
 }

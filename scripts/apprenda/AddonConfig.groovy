@@ -6,16 +6,8 @@ import static groovyx.net.http.ContentType.*
 
 final def apTool = new AirPluginTool(this.args[0], this.args[1])
 final def props = apTool.getStepProperties()
-def paths = [Auth:'/authentication/api/v1/sessions/developer', 
-	NewVersion:'/developer/api/v1/versions/', 
-	NewApp:'/developer/api/v1/apps/',
-	GetAliases:'/developer/api/v1/apps/', 
-	GetVersions:'/developer/api/v1/versions/', 
-	Demote:'/developer/api/v1/versions/',
-	Scale:'/developer/api/v1/components/{appalias}/{verAlias}/scale/{instanceCount}',
-	GetAddon:'/developer/api/v1/addons/',
-	GetAddonInstance: '/developer/api/v1/addons/']
 def newVersionRequired = false
+
 println "Starting Apprenda Authentication"
 def client = new RESTClient(props.ApprendaURL)
 // handle authentication
