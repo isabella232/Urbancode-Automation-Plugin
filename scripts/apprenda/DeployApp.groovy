@@ -21,10 +21,7 @@ public class InternalDeployApp {
 			println "DEBUG: oldVerNo: " + oldVerNo + " newVerNo: " + newVerNo
 			
 			// check to make sure the app exists. if not, create it.
-			def appInfo = ApprendaClient.GetApplicationInfo(props)
-			println appInfo
-			if(ap)
-			
+			def appInfo = ApprendaClient.GetApplicationInfo(props)			
 			def versions = ApprendaClient.GetVersionInfo(props)
 			println versions
 			versions.each { version ->
@@ -80,6 +77,10 @@ public class InternalDeployApp {
 			ApprendaClient.Demote(props, versionOutput.targetVersion)	
 		}
 		ApprendaClient.PatchApplication(props, versionOutput.targetVersion)
+		if(props.Stage == 'Sandbox' || props.Stage == 'Published')
+		{
+			ApprendaClient.Promote(props, versionOutput.targetVersion)
+		}
 	}
 	catch (Exception e) {
 		println "Error during deployment to Apprenda"

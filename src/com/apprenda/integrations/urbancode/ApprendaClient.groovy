@@ -87,8 +87,8 @@ class ApprendaClient {
 	static def PatchApplication(props, version)
 	{
 		getInstance(props)
-		def archive = new File(props.ArchiveLocation)
-		def patchApp = client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + props.Stage, body:archive.bytes, requestContentType:BINARY)
+		def archive = new File(props.ArchiveName)
+		def patchApp = client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + props.Stage.toLowerCase(), body:archive.bytes, requestContentType:BINARY)
 		println patchApp.status
 		println patchApp.getData()
 		return patchApp
@@ -97,7 +97,7 @@ class ApprendaClient {
 	static def Promote(props, version)
 	{
 		getInstance(props)
-		def promoteVersion = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=promote")
+		def promoteVersion = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=promote&stage=" + props.Stage.toLowerCase())
 		println promoteVersion.status
 		println promoteVersion.getData()
 		return promoteVersion

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" xmlns:server="http://www.urbancode.com/PluginServerXMLSchema_v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <header>
-    <identifier id="apprendadeploy" name="AppendaDeploy" version="1"/>
+    <identifier id="apprendadeploy" name="AppendaDeploy" version="4"/>
     <description>This is a list of build steps that are designed to facilitate the deployment of applications to Apprenda.
     Included are build steps that will deploy 'hybrid apps', where some app components and services are pushed to BlueMix, 
     and then tying them back into the Apprenda application.
@@ -55,7 +55,7 @@
     ${GROOVY_HOME}/bin/groovy -cp src cmd.groovy ${PLUGIN_INPUT_PROPS} ${PLUGIN_OUTPUT_PROPS} -->
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
-      <arg path="java/support.jar:lib/gson-2.2.4.jar:lib/http-builder-0.7.1.jar:lib/httpclient-4.2.1.jar:lib/httpcore-4.2.1.jar:lib/json-lib-2.4-jdk15.jar:lib/xml-resolver-1.2.jar:lib/commons-lang-2.6.jar:lib/ezmorph-1.0.6.jar:lib/commons-collections-3.2.1.jar:lib/commons-beanutils-1.8.3.jar"/>
+      <arg path="java/support.jar:lib/gson-2.2.4.jar:lib/http-builder-0.7.1.jar:lib/httpclient-4.2.1.jar:lib/httpcore-4.2.1.jar:lib/json-lib-2.4-jdk15.jar:lib/xml-resolver-1.2.jar:lib/commons-lang-2.6.jar:lib/ezmorph-1.0.6.jar:lib/commons-collections-3.2.1.jar:lib/commons-beanutils-1.8.3.jar:lib/nekohtml-1.9.13.jar:lib/xerces-2.9.0.jar"/>
       <arg file="apprenda/DeployApp.groovy"/>
       <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
@@ -130,6 +130,9 @@
       <property name="randomroute">
        <property-ui description="Create a random route for this app." label="Random route" type="checkBox"/>
       </property>
+      <property name="pathToCF">
+       <property-ui description="Set the path to CF on the target agent." label="Path to CF" type="textBox"/>
+      </property>
     </properties>
    
     <post-processing><![CDATA[
@@ -142,8 +145,8 @@
      ]]></post-processing>
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
-      <arg path="java/support.jar"/>
-      <arg file="apprenda/pushApplication.groovy"/>
+      <arg path="java/support.jar:lib/groovy-backports-compat23-2.4.5.jar"/>
+      <arg file="apprenda/PushApplication.groovy"/>
       <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
@@ -178,6 +181,9 @@
       <property name="plan" required="true">
         <property-ui default-value="" description="This is the service plan you wish to use to provision this service." label="Service Plan" type="textBox"/>
       </property>
+      <property name="pathToCF">
+       <property-ui description="Set the path to CF on the target agent." label="Path to CF" type="textBox"/>
+      </property>
     </properties>
     <post-processing><![CDATA[
         if (properties.get("exitCode") != 0) {
@@ -190,13 +196,13 @@
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
       <arg path="java/support.jar:lib/groovy-backports-compat23-2.4.5.jar"/>
-      <arg file="bluemix/createService.groovy"/>
+      <arg file="apprenda/createService.groovy"/>
       <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
-  <step-type name="Bind Service to Apprenda Application">
-	   <description>Bind a Bluemix service to an Apprenda Application.</description>
+  <step-type name="Add BlueMix Component to Apprenda Application">
+	   <description>Bind a Bluemix application or service to an Apprenda Application.</description>
 	   <properties>
 	     <property name="api" required="true">
 	       <property-ui default-value="${p:resource/Bluemix_API}" description="A url of the target BlueMix system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
@@ -216,80 +222,23 @@
 	     <property name="space" required="true">
 	       <property-ui default-value="${p:resource/Bluemix_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
 	     </property>
-	     <property name="application" required="true">
-	       <property-ui default-value="" description="The Apprenda alias" label="Application name" type="textBox"/>
+	     <property name="component" required="true">
+	       <property-ui default-value="" description="This is the bluemix component, application or service." label="Bluemix Component Name" type="textBox"/>
 	     </property>
-	     <property name="service" required="true">
-	       <property-ui default-value="" description="Name of the BlueMix service." label="Service name" type="textBox"/>
+	     <property name="componentType" required="true">
+	       <property-ui description="The type of BlueMix Component, application or service." label="BlueMix Component Type" type="selectBox"/>
+	       <value label="Application">Application</value>
+	       <value label="Service">Service</value>
 	     </property>
-	     <property name="ApprendaURL">
-           <property-ui default-value="${p:resource/Apprenda_URL}" description="The root url of the Apprenda instance." hidden="true" label="Apprenda REST URL" type="textBox"/>
-         </property>
-         <property name="SelfSignedFlag">
-		   <property-ui default-value="${p:resource/Apprenda_SSF}" description="Check this is your are using a development environment. Do NOT enable in production." hidden="true" label="This environment is using a self-signed SSL certificate" type="checkBox"/>
-         </property>
-         <property name="ApprendaUser">
-           <property-ui default-value="${p:resource/Apprenda_User}" description="The developer account username associated with the platform." label="Apprenda User Name" type="textBox"/>
-         </property>
-         <property name="ApprendaPassword">
-           <property-ui default-value="${p:resource/Apprenda_PW}" description="The respective password." label="Apprenda Password" type="secureBox"/>
-         </property>
-         <property name="TenantAlias">
-           <property-ui default-value="${p:resource/Apprenda_Tenant}" description="Your Development Team Alias" label="Development Team" type="textBox"/>
-         </property>
-         <property name="AppAlias">
-           <property-ui description="The Apprenda Application" label="Apprenda Application Alias" type="textBox"/>
-         </property>
-	   </properties>
-	   <post-processing><![CDATA[
-	       if (properties.get("exitCode") != 0) {
-	           properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
-	       }
-	       else {
-	           properties.put("Status", "Success");
-	       }
-	    ]]></post-processing>
-	   <command program="${GROOVY_HOME}/bin/groovy">
-	     <arg value="-cp"/>
-	     <arg path="java/support.jar"/>
-	     <arg file="apprenda/bindService.groovy"/>
-	     <arg file="${PLUGIN_INPUT_PROPS}"/>
-	     <arg file="${PLUGIN_OUTPUT_PROPS}"/>
-	   </command>
-	</step-type>
-  <step-type name="Bind BlueMix Component to Apprenda Application">
-	   <description>Bind a Bluemix component to an Apprenda Application.</description>
-	   <properties>
-	     <property name="api" required="true">
-	       <property-ui default-value="${p:resource/Bluemix_API}" description="A url of the target BlueMix system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
-	     </property>
-	     <property name="user" required="true">
-	       <property-ui default-value="" description="The user name of the account that will interact with BlueMix system" label="BlueMix User" type="textBox"/>
-	     </property>
-	     <property name="password" required="true">
-	       <property-ui default-value="" description="The password of the account that will interact with BlueMix system." label="Password" type="secureBox"/>
-	     </property>
-	     <property name="selfSigned">
-	       <property-ui description="If checked, SSL validation will be skipped." label="Self-signed Certificate" type="checkBox"/>
-	     </property>
-	     <property name="org" required="true">
-	       <property-ui default-value="${p:resource/Bluemix_ORG}" description="The name of the organization where the application will be deployed." hidden="true" label="Organization" type="textBox"/>
-	     </property>
-	     <property name="space" required="true">
-	       <property-ui default-value="${p:resource/Bluemix_SPACE}" description="The name of the space within the organization that the application will be deployed." hidden="true" label="Space" type="textBox"/>
-	     </property>
-	     <property name="application" required="true">
-	       <property-ui default-value="" description="The application name. For Apprenda apps, this is the alias" label="Application name" type="textBox"/>
-	     </property>
-	     <property name="service" required="true">
-	       <property-ui default-value="" description="Name of the BlueMix service." label="Service name" type="textBox"/>
-	     </property>
-	     <property name="ApprendaArchiveLocation">
+	     <property name="ApprendaArchiveLocation" required="true">
            <property-ui default-value=".\" description="The root directory of the Apprenda instance" label="Apprenda Archive Root Location" type="textBox"/>
          </property>
-         <property name="JavaConfigFile">
-           <property-ui default-value="" description="This is the name of the configuration file your Java application is using." label="Java Configuration File Location" type="textBox"/>
+         <property name="alias" required="true">
+           <property-ui description="The token alias being used in the Apprenda Application." label="Configuration Alias" type="textBox" />
          </property>
+         <property name="pathToCF">
+       		<property-ui description="Set the path to CF on the target agent." label="Path to CF" type="textBox"/>
+      	 </property>
 	   </properties>
 	   <post-processing><![CDATA[
 	       if (properties.get("exitCode") != 0) {
@@ -302,13 +251,13 @@
 	    </post-processing>
 	   <command program="${GROOVY_HOME}/bin/groovy">
 	     <arg value="-cp"/>
-	     <arg path="java/support.jar"/>
-	     <arg file="bindService.groovy"/>
+	     <arg path="java/support.jar:lib/groovy-backports-compat23-2.4.5.jar"/>
+	     <arg file="apprenda/BindBluemixComponentToApprendaApp.groovy"/>
 	     <arg file="${PLUGIN_INPUT_PROPS}"/>
 	     <arg file="${PLUGIN_OUTPUT_PROPS}"/>
 	   </command>
 	</step-type>
-  <step-type name="Map Route">
+  <step-type name="Map Route to BlueMix App">
     <description>Add a url route to an application.</description>
     <properties>
       <property name="api" required="true">
@@ -357,7 +306,7 @@
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
-  <step-type name="Unmap Route">
+  <step-type name="Unmap Route to BlueMix App">
     <description>Remove a url route to an application.</description>
     <properties>
       <property name="api" required="true">
@@ -406,8 +355,8 @@
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
-  <step-type name="Delete App">
-    <description>Delete an application.</description>
+  <step-type name="Delete BlueMix App">
+    <description>Delete a BlueMix Application.</description>
     <properties>
       <property name="api" required="true">
         <property-ui default-value="${p:resource/Bluemix_API}" description="A url of the target BlueMix system, such as http://api.ng.bluemix.net." hidden="true" label="API" type="textBox"/>
@@ -451,7 +400,7 @@
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
-  <step-type name="Start App">
+  <step-type name="Start BlueMix App">
     <description>Start an application.</description>
     <properties>
       <property name="api" required="true">
@@ -493,7 +442,7 @@
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
-  <step-type name="Stop App">
+  <step-type name="Stop BlueMix App">
     <description>Stop an application.</description>
     <properties>
       <property name="api" required="true">
@@ -535,7 +484,7 @@
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
   </step-type>
-  <step-type name="Restart App">
+  <step-type name="Restart BlueMix App">
     <description>Restart an application.</description>
     <properties>
       <property name="api" required="true">
@@ -598,7 +547,7 @@
             <property-ui description="The Application Alias" label="Application" type="textBox"/>
         </property>
         <property name="ComponentAlias">
-        	<property-ui description="The Component Alias being used to scale" label="Component" type="textBox" />
+        	<property-ui description="The Component Alias being used to scale" label="Component" type="textBox"/>
         </property>
   	</properties>
   	<post-processing><![CDATA[
@@ -617,5 +566,4 @@
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
   	</command>
   </step-type>
-
 </plugin>

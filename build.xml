@@ -32,7 +32,7 @@
 			<javac debug="true" destdir="${bin.dir}" target="1.6" source="1.6">
 				<src path="${src.dir}" />
 			</javac>
-			<jar destfile="${build.dir}/java/example.jar" basedir="${bin.dir}" />
+			<jar destfile="${build.dir}/java/support.jar" basedir="${bin.dir}" />
 		</target>
 		<target name="copyDependencies">
 			<copy todir="${scripts.dir}/apprenda">

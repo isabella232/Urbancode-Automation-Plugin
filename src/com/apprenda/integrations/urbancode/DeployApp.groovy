@@ -77,6 +77,10 @@ public class InternalDeployApp {
 			ApprendaClient.Demote(props, versionOutput.targetVersion)	
 		}
 		ApprendaClient.PatchApplication(props, versionOutput.targetVersion)
+		if(props.Stage == 'Sandbox' || props.Stage == 'Published')
+		{
+			ApprendaClient.Promote(props, versionOutput.targetVersion)
+		}
 	}
 	catch (Exception e) {
 		println "Error during deployment to Apprenda"

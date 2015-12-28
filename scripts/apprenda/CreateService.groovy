@@ -1,13 +1,4 @@
-#!/usr/bin/env groovy
-
-/*
-- Licensed Materials - Property of IBM Corp.
-- IBM UrbanCode Deploy
-- (c) Copyright IBM Corporation 2014. All Rights Reserved.
--
-- U.S. Government Users Restricted Rights - Use, duplication or disclosure restricted by
-- GSA ADP Schedule Contract with IBM Corp.
-*/
+package com.apprenda.integrations.urbancode
 
 import java.io.FileNotFoundException
 import java.io.IOException
