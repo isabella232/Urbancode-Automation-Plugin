@@ -287,7 +287,6 @@
       <property name="hostname" required="false">
         <property-ui default-value="" description="The hostname within the domain for the url route." label="Hostname" type="textBox"/>
       </property>
-      
     </properties>
    
     <post-processing><![CDATA[

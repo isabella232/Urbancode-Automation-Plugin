@@ -22,6 +22,39 @@ body {
     background: #fff;
 }
 
+table {
+    width:100%;
+}
+
+thead {
+    font-size: 12px;
+    font-weight: 400;
+    background-color: #195974;
+    color: white;
+    border: 1px solid black;
+    text-align: center;
+}
+
+tbody, tr
+{
+    border: 1px solid black;
+}
+
+
+td {
+    font-size: 14px;
+}
+
+tr.even
+{
+    background-color: whitesmoke;
+}
+
+tr.odd
+{
+    background-color:white;
+}
+
 img, iframe {
     max-width: 100%;
 }
