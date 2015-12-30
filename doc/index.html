@@ -43,19 +43,48 @@
       <li class="separator"></li>
       <li><strong>Installation and Usage</strong></li>
       <li><a href="#install" class=" ">Installing the Plugin</a></li>
-      <li><a href="#usage" class=" ">Using the Plugin</a></li>
+      <li><a href="#usage" class=" ">Creating a Deployment Process</a></li>
+      <li><a href="#execution" class=" ">Executing the Deployment</a></li>
       <li class="separator"></li>
       <li><strong>Configuration</strong></li>
       <li><a href="#envars" class=" ">Environment Variables</a></li>
       <li class="separator"></li>
       <li><strong>Build Steps</strong></li>
+      <li><a href="#deployToApprenda">Deploy to Apprenda</a></li>
+      <li><a href="#deployBluemixComponent">Deploy Bluemix Component</a></li>
+      <li><a href="#createBluemixService">Create Bluemix Service</a></li>
+      <li><a href="#addBluemixComponentToApprendaApplication">Add Bluemix Component to Apprenda Application</a></li>
+      <li><a href="#addApprendaComponentToBluemixApplication">Add Apprenda Component to Bluemix Application</a></li>
+      <li><a href="#mapRouteToBluemixComponent">Map Route to Bluemix Component</a></li>
+      <li><a href="#unmapRouteToBluemixComponent">Unmap Route to Bluemix Component</a></li>
+      <li><a href="#deleteBluemixComponent">Delete Bluemix Component</a></li>
+      <li><a href="#">Example Build Step</a></li>
+      <li><a href="#stepgoeshere">Example Build Step</a></li>
+      <li><a href="#stepgoeshere">Example Build Step</a></li>
+      <li><a href="#stepgoeshere">Example Build Step</a></li>
+      <li><a href="#stepgoeshere">Example Build Step</a></li>
+      <li><a href="#stepgoeshere">Example Build Step</a></li>
+      <li><a href="#stepgoeshere">Example Build Step</a></li>
       <li><a href="#stepgoeshere">Example Build Step</a></li>
     </ul>
     <div class="docs-content">
       <h2> Getting Started</h2>
       <h3 id="overview"> Overview</h3>
+        <p>IBM Urbancode Deploy provides the ability for IT organizations to be able to continuously deliver their applications to production in a timely, secure, efficient manner. This integration extends that functionality and provides IT to target the Apprenda platform as an endpoint. </p>
       <h3 id="benefits"> Release Notes</h3>
+        <ul>
+            <li>Version 1.0</li>
+                <ul>
+                    <li>List features here.</li>
+                </ul>
+        </ul>
       <h3 id="features"> Features</h3>
+        <ul>
+            <li>Provides the ability to target Apprenda as an endpoint, enabling organiztions to deploy and update applications to the platform.</li>
+            <li>Deploy components to Bluemix, IBM's platform as a service (PaaS)</li>
+            <li>Create and update Bluemix services.</li>
+            <li>Bind Bluemix components to Apprenda applications, and vice versa.</li>
+        </ul>
       <h3 id="license"> License</h3>
         <p> Copyright (c) 2015 Apprenda Inc.</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
@@ -67,7 +96,17 @@
       <hr>
       <h2> Installation and Usage</h2>
       <h3 id="install"> Installing the Plugin</h3>
-      <h3 id="usage"> Using the Plugin</h3>
+      <h3 id="setup">Creating a Deployment Process</h3>
+      <h3 id="usage"> Executing a Deployment with the Plugin</h3>
+        <p>First, navigate to the Urbancode installation and log in. We're using admin credentials here, but make sure you are using an ID that has the necessary permissions to create processes, alter applications and components.</p>
+        <img src="assets/images/usage01.png"/>
+        <p>Navigate to the Applications tab, and find the application you created in the previous section.</p>
+        <img src="assets/images/usage02.png"/>
+        <p></p>
+        <img src="assets/images/usage03.png"/>
+        <img src="assets/images/usage04.png"/>
+        <img src="assets/images/usage05.png"/>
+        <img src="assets/images/usage06.png"/>
       <h2> Configuration</h2>
       <h3 id="envars"> Environment Variables</h3>
       <h2> Build Steps</h2>
