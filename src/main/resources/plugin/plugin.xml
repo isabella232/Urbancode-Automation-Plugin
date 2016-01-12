@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" xmlns:server="http://www.urbancode.com/PluginServerXMLSchema_v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <header>
-    <identifier id="apprendadeploy_test" name="AppendaDeploy_test" version="4"/>
+    <identifier id="apprendadeploy" name="AppendaDeploy" version="5"/>
     <description>This is a list of build steps that are designed to facilitate the deployment of applications to Apprenda.
     Included are build steps that will deploy 'hybrid apps', where some app components and services are pushed to BlueMix, 
     and then tying them back into the Apprenda application.
