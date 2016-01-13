@@ -10,9 +10,10 @@
 * GSA ADP Schedule Contract with IBM Corp.
 */
 package main.java.urbancode
-
+import groovy.util.logging.Slf4j
 import java.util.regex.Matcher
 
+@Slf4j
 public class CommandHelper {
 
     //**************************************************************************
@@ -160,11 +161,11 @@ public class CommandHelper {
     public int runCommand(def message, def command, Closure closure, String input) {
         command[0] = sanitizeExecutable(command[0])
         pb.command(command as String[])
-        println()
+        log.info()
         if (message) {
-            println(message)
+            log.info(message)
         }
-        println("command: ${pb.command().collect{addDisplayQuotes(it)}.join(' ')}")
+        log.info("command: ${pb.command().collect{addDisplayQuotes(it)}.join(' ')}")
         def proc = pb.start()
         
         if (input != null && input.length() > 0) {
@@ -267,7 +268,7 @@ public class CommandHelper {
         if (pb != null) {
             Map<String, String> environmentVariables = pb.environment();
             environmentVariables.each { key, value ->
-                println "$key=$value"
+                log.info("$key=$value")
             }
         }
     }

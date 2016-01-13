@@ -1,8 +1,9 @@
 package test.java
 import spock.lang.Specification
-import main.java.*
+import groovy.util.logging.Slf4j
 import main.java.ApprendaClient
 
+@Slf4j
 class ApprendaClientTests extends Specification {
 	def testProperties = [ApprendaURL:'https://apps.apprenda.heineken',
 		ApprendaUser:'fluffy@apprenda.com',
@@ -27,7 +28,7 @@ class ApprendaClientTests extends Specification {
 	def TestGetApplicationInfo()
 	{
 		setup:
-			def response = ApprendaClient.NewApplication(testProperties, 'v1')
+			ApprendaClient.NewApplication(testProperties)
 			def data = ApprendaClient.GetApplicationInfo(testProperties)
 		expect:
 			data.getData().alias == 'apprendazon'
@@ -38,7 +39,7 @@ class ApprendaClientTests extends Specification {
 		setup:
 			testProperties.AppAlias = 'aoisnfsaod'
 			def data = ApprendaClient.GetApplicationInfo(testProperties)
-			println data
+			log.info(data)
 		expect:
 			data != null
 	}
@@ -66,7 +67,7 @@ class ApprendaClientTests extends Specification {
 			response2.status == 409
 			data.getData().alias == 'newapplication'
 		cleanup:
-			def deleteResponse = ApprendaClient.DeleteApplication(newAppProperties)
+			DeleteApplication(newAppProperties)
 	}
 	
 	def TestDeleteApplication()
@@ -95,7 +96,7 @@ class ApprendaClientTests extends Specification {
 			response.status == 201
 			patch.status == 200
 		cleanup:
-			def deleteResponse = ApprendaClient.DeleteApplication(patchAppProperties)
+			ApprendaClient.DeleteApplication(patchAppProperties)
 	}
 	
 	def TestPromoteDemoteApplication()
@@ -104,17 +105,17 @@ class ApprendaClientTests extends Specification {
 			def promoteAppProperties = testProperties
 			promoteAppProperties.AppAlias = 'promoteApplication'
 			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
-			def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			//def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 			def demote = ApprendaClient.Demote(promoteAppProperties, 'v1')
-			def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 		expect:
 			response.status == 201
 			promote.status == 200
 			demote.status == 200
 		cleanup:
-			def deleteResponse = ApprendaClient.DeleteApplication(promoteAppProperties)
+			ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
 
 	def TestPostNewVersionApplication()
@@ -123,17 +124,17 @@ class ApprendaClientTests extends Specification {
 			def promoteAppProperties = testProperties
 			promoteAppProperties.AppAlias = 'promoteApplication'
 			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
-			def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			//def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 			def newVersion = ApprendaClient.PostNewVersion(promoteAppProperties, 'v2')
-			def patch2 = ApprendaClient.PatchApplication(promoteAppProperties, 'v2')
+			//def patch2 = ApprendaClient.PatchApplication(promoteAppProperties, 'v2')
 			def promote3 = ApprendaClient.Promote(promoteAppProperties, 'v2')
-			def data3 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data3 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 			def promote4 = ApprendaClient.Promote(promoteAppProperties, 'v2')
-			def data4 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data4 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 		expect:
 			response.status == 201
 			promote.status == 200
@@ -143,8 +144,6 @@ class ApprendaClientTests extends Specification {
 			promote4.status == 200
 			// we'll do tests with the data later.
 		cleanup:
-			def deleteResponse = ApprendaClient.DeleteApplication(promoteAppProperties)
+			ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
-	
-	def TestScale
 }

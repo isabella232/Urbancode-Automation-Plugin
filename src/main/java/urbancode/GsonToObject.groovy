@@ -10,16 +10,13 @@
 * GSA ADP Schedule Contract with IBM Corp.
 */
 package main.java.urbancode;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import groovy.util.logging.Slf4j
 
+@Slf4j
 final class GsonToObject {
 
     //******************************************************************************************************************
@@ -98,7 +95,7 @@ final class GsonToObject {
                         result = bigDecimal.toBigIntegerExact();
                     }
                     catch (ArithmeticException e3) {
-                        // result will be used unmodified
+                        log.error(e3)
                     }
                 }
             }

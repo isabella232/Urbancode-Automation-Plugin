@@ -10,10 +10,8 @@
 * GSA ADP Schedule Contract with IBM Corp.
 */
 package main.java.urbancode;
-
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
 import javax.net.ssl.X509TrustManager;
 
 /**

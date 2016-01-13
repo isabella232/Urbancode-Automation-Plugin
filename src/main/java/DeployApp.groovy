@@ -1,11 +1,12 @@
 package main.java
-import jdk.internal.dynalink.beans.CallerSensitiveDetector.DetectionStrategy
-import main.java.urbancode.AirPluginTool;
+import main.java.urbancode.AirPluginTool
+import groovy.util.logging.Slf4j
 
-
+@Slf4j
 public class InternalDeployApp {
 	def detectVersion(versionInfo, props)
 	{
+		log.info("Starting version detection.")
 		def newVersionRequired = false
 		def targetVersion = versionInfo.currentVersion.alias
 		def newVerStage = versionInfo.currentVersion.stage
@@ -16,8 +17,7 @@ public class InternalDeployApp {
 		else if(versionInfo.currentVersion.stage == 'Published')
 		{
 			def oldVerNo = versionInfo.currentVersion.alias.substring(1).toInteger()
-			def newVerNo = oldVerNo
-			def appInfo = ApprendaClient.GetApplicationInfo(props)			
+			def newVerNo = oldVerNo			
 			def versions = ApprendaClient.GetVersionInfo(props)
 			versions.getData().each { version ->
 				def verNo = version.alias.substring(1).toInteger()
@@ -40,7 +40,8 @@ public class InternalDeployApp {
 		}
 		else
 		{
-			throw new Exception("We received data we didn't expect.")
+			log.error("We received data we didn't expect. Exiting...")
+			return null
 		}
 	}
 }
@@ -54,7 +55,7 @@ public class InternalDeployApp {
 		// inject here that if we don't have a new application, we need to create it.
 		if(getApps == null)
 		{
-			def newApplication = ApprendaClient.NewApplication(props)
+			ApprendaClient.NewApplication(props)
 			// should come back now as v1 and definition
 			getApps = ApprendaClient.GetApplicationInfo(props)
 		}
@@ -74,8 +75,8 @@ public class InternalDeployApp {
 			ApprendaClient.Promote(props, versionOutput.targetVersion)
 		}
 	}
-	catch (Exception e) {
-		e.printStackTrace()
+	catch (e) {
+		log.error(e)
 		System.exit 1
 	}
 	System.exit 0

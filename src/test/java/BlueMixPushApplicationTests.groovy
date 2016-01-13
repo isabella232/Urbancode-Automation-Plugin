@@ -28,7 +28,6 @@ public class BlueMixPushApplicationTests extends Specification {
 	def TestDeployment()
 	{
 		setup:
-				final def workDir = new File('.').canonicalFile
 				def internal = new InternalPushApplication()
 		when:
 				internal.deployAppToBlueMix(testProps)

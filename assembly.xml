@@ -31,8 +31,6 @@
             </file>  
             
        </files>
-         
-       <!-- use this section if you want to package dependencies -->  
        <dependencySets>  
             <dependencySet>  
                 <outputDirectory>lib</outputDirectory>  

@@ -3,11 +3,10 @@ import spock.lang.IgnoreRest;
 import spock.lang.Specification
 import com.apprenda.integrations.urbancode.*
 import org.custommonkey.xmlunit.*
-import groovy.util.XmlSlurper
 import com.apprenda.integrations.urbancode.util.*
-import com.sun.org.apache.xerces.internal.util.XML11Char
-import groovy.xml.XmlUtil
-import main.java.InternalBindBluemixComponentToApprendaApp;
+import main.java.InternalBindBluemixComponentToApprendaApp
+import groovy.util.logging.Slf4j
+@Slf4j
 class BindComponentTests extends Specification {
 
 	def props = [
@@ -29,7 +28,7 @@ class BindComponentTests extends Specification {
 		setup:
 			def internal = new InternalBindBluemixComponentToApprendaApp()
 			def appinfo = internal.GetBluemixComponentInfo(props)
-			println 'appinfo: ' + appinfo
+			log.info('appinfo: ' + appinfo)
 		expect:
 			appinfo.state.equals('started')
 			appinfo.urls.equals('dutronflask.mybluemix.net')

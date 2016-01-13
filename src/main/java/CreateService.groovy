@@ -1,48 +1,51 @@
 package main.java
+import main.java.urbancode.CommandHelper
+import groovy.util.logging.Slf4j
 
-import java.io.FileNotFoundException
-import java.io.IOException
+@Slf4j
+public class InternalCreateService
+{
+	final def workDir = new File('.').canonicalFile
+	final def props = new Properties()
+	final def inputPropsFile = null
+	final def api = props['api']
+	final def user = props['user']
+	final def password = props['password']
+	final def selfSigned = props['selfSigned']
+	final def org = props['org']
+	final def space = props['space']
+	final def name = props['name']
+	final def service = props['service']
+	final def plan = props['plan']
+	final def CF_PATH = props['pathToCF']
+	def commandHelper = new CommandHelper(workDir);
+}
 
-import main.java.urbancode.AirPluginTool;
-import main.java.urbancode.CommandHelper;
-
-final def workDir = new File('.').canonicalFile;
-final def props = new Properties();
-final def inputPropsFile = new File(args[0]);
 try {
-    inputPropsStream = new FileInputStream(inputPropsFile);
-    props.load(inputPropsStream);
+	def service = new InternalCreateService()
+	service.inputPropsFile = new File(args[0])
+	inputPropsStream = new FileInputStream(inputPropsFile)
+	props.load(inputPropsStream)
 }
 catch (IOException e) {
-    throw new RuntimeException(e);
+	log.error("Could not load properties file.", e)
+	throw new IOException(e)
 }
 
-final def api = props['api'];
-final def user = props['user'];
-final def password = props['password'];
-final def selfSigned = props['selfSigned']
-final def org = props['org'];
-final def space = props['space'];
-final def name = props['name'];
-final def service = props['service'];
-final def plan = props['plan'];
-// since CF doesn't appear to work correctly
-final def CF_PATH = props['pathToCF']
-def commandHelper = new CommandHelper(workDir);
 
 // Setup path
 try {
 	def curPath = System.getenv("PATH");
 	def pluginHome = new File(System.getenv("PLUGIN_HOME"))
-	println "Setup of path using plugin home: " + pluginHome;
+	log.info("Setup of path using plugin home: " + pluginHome)
 	def binDir = new File(pluginHome, "bin")
 	def newPath = curPath+":"+binDir.absolutePath;
 	commandHelper.addEnvironmentVariable("PATH", newPath);
 	def cfHome = new File(props['PLUGIN_INPUT_PROPS']).parentFile
-	println "Setting CF_HOME to: " + cfHome;
+	log.info("Setting CF_HOME to: " + cfHome)
 	commandHelper.addEnvironmentVariable("CF_HOME", cfHome.toString());
-} catch(Exception e){
-	println "ERROR setting path: ${e.message}"
+} catch( e){
+	log.error("ERROR setting path: ${e.message}",e)
 	System.exit(1)
 }
 
@@ -53,8 +56,8 @@ try {
         commandArgs << "--skip-ssl-validation"
     }
 	commandHelper.runCommand("Setting cf target api", commandArgs);
-} catch(Exception e){
-	println "ERROR setting api: ${e.message}"
+} catch( e){
+	log.error("ERROR setting api: ${e.message}",e)
 	System.exit(1)
 }
 
@@ -62,8 +65,8 @@ try {
 try {
 	def commandArgs = [CF_PATH, "auth", user, password];
 	commandHelper.runCommand("Authenticating with CloudFoundry", commandArgs);
-} catch(Exception e){
-	println "ERROR authenticating : ${e.message}"
+} catch(e){
+	log.error("ERROR authenticating : ${e.message}",e)
 	System.exit(1)
 }
 
@@ -71,8 +74,8 @@ try {
 try {
 	def commandArgs = [CF_PATH, "target", "-o", org];
 	commandHelper.runCommand("Setting CloufFoundry target organization", commandArgs);
-} catch(Exception e){
-	println "ERROR setting target organization : ${e.message}"
+} catch(e){
+	log.error("ERROR setting target organization : ${e.message}",e)
 	System.exit(1)
 }
 
@@ -81,8 +84,8 @@ try {
 try {
 	def commandArgs = [CF_PATH, "create-space", space];
 	commandHelper.runCommand("Creating CloufFoundry space", commandArgs);
-} catch(Exception e){
-	println "ERROR creating space : ${e.message}"
+} catch(e){
+	log.error("ERROR creating space : ${e.message}", e)
 	System.exit(1)
 }
 
@@ -90,8 +93,8 @@ try {
 try {
 	def commandArgs = [CF_PATH, "target", "-s", space];
 	commandHelper.runCommand("Setting CloufFoundry target space", commandArgs);
-} catch(Exception e){
-	println "ERROR setting target space : ${e.message}"
+} catch(e){
+	log.error("ERROR setting target space : ${e.message}")
 	System.exit(1)
 }
 
@@ -99,8 +102,8 @@ try {
 try {
 	def commandArgs = [CF_PATH, "create-service", service, plan, name];
 	commandHelper.runCommand("Executing CF create-service", commandArgs);
-} catch(Exception e){
-	println "ERROR executing create-service : ${e.message}";
+} catch(e){
+	log.error("ERROR executing create-service : ${e.message}")
 	System.exit(1);
 }
 
@@ -108,8 +111,8 @@ try {
 try {
 	def commandArgs = [CF_PATH, "logout"];
 	commandHelper.runCommand("Logout from CloudFoundry system", commandArgs);
-} catch(Exception e){
-	println "ERROR logging out : ${e.message}"
+} catch(e){
+	log.error("ERROR logging out : ${e.message}")
 	System.exit(1)
 }
 

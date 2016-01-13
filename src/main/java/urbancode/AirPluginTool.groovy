@@ -11,6 +11,8 @@
 */
 package main.java.urbancode;
 
+import main.java.exceptions.UrbancodeRuntimeException
+
 public class AirPluginTool {
 
     //**************************************************************************
@@ -22,9 +24,6 @@ public class AirPluginTool {
     //**************************************************************************
     
     final public def isWindows = (System.getProperty('os.name') =~ /(?i)windows/).find()
-
-    def out = System.out;
-    def err = System.err;
 
     private def inPropsFile;
     private def outPropsFile;
@@ -46,7 +45,7 @@ public class AirPluginTool {
             props.load(inputPropsStream);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UrbancodeRuntimeException(e);
         }
         finally {
             inputPropsStream.close();

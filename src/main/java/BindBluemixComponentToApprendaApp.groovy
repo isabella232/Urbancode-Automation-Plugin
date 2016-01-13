@@ -1,19 +1,14 @@
 package main.java
-import groovy.util.XmlSlurper
-import groovy.xml.XmlUtil
+import groovy.util.logging.Slf4j
 import main.java.urbancode.AirPluginTool;
 import main.java.urbancode.CommandHelper;
-import groovy.xml.StreamingMarkupBuilder
 import groovy.io.FileType.*
 import groovy.io.FileVisitResult.*
-import com.sun.xml.internal.ws.org.objectweb.asm.Item
-
-import org.junit.After
-
 import static groovy.io.FileType.FILES
 final def apTool = new AirPluginTool(this.args[0], this.args[1])
 final def props = apTool.getStepProperties()
 
+@Slf4j
 class InternalBindBluemixComponentToApprendaApp
 {	
 	def UpdateConfigurationFiles(props)
@@ -24,7 +19,7 @@ class InternalBindBluemixComponentToApprendaApp
 		{
 			if(filesToMatch.contains(it.name))
 			{
-				println "Found matching: " + it.name
+				log.info("Found matching: " + it.name)
 				CheckAndReplaceTokens(it, props)
 			}
 		}
@@ -35,17 +30,17 @@ class InternalBindBluemixComponentToApprendaApp
 	{
 		if(file.name == 'web.xml')
 		{
-			println "Updating web.xml"
+			log.info("Updating web.xml")
 			UpdateWebXmlFile(file, props)
 		}
 		if(file.name.contains('.config'))
 		{
-			println "Updating .net config file: " + file.name
+			log.info("Updating .net config file: " + file.name)
 			UpdateDotNetFile(file, props)
 		}
 		if(file.name == 'Dockerfile')
 		{
-			println "Updating Dockerfile"
+			log.info("Updating Dockerfile")
 			UpdateDockerFile(file, props)
 		}
 	}
@@ -62,17 +57,17 @@ class InternalBindBluemixComponentToApprendaApp
 		def contextParams = webappchildren.findAll { it.name() == 'context-param' }
 		for(contextParam in contextParams)
 			{
-				println contextParam
-				println contextParam.'param-value'
-				println contextParam.'param-value'[0].text()
+				log.info(contextParam)
+				log.info(contextParam.'param-value')
+				log.info(contextParam.'param-value'[0].text())
 				if(contextParam.'param-value'[0].text() == '$#UDEPLOY-' + props.alias + '#$')
 				{
-					println "found a match"
+					log.info("found a match")
 					contextParam.'param-value'[0].value = props.url
 				}
 				else
 				{
-					println "no match"
+					log.info("no match")
 				}
 			}
 		// for testing purposes
@@ -80,7 +75,7 @@ class InternalBindBluemixComponentToApprendaApp
 		def printer = new XmlNodePrinter(new PrintWriter(s))
 		printer.preserveWhitespace = true
 		printer.print(xml)
-		println s
+		log.info(s)
 		def filewriter = new FileWriter(file)
 		def w = new XmlNodePrinter(new PrintWriter(filewriter))
 		w.preserveWhitespace = true
@@ -99,11 +94,11 @@ class InternalBindBluemixComponentToApprendaApp
 		def appSettingsChildren = appSettings.children()
 		for(child in appSettingsChildren)
 		{
-			println child
-			println child.@value
+			log.info(child)
+			log.info(child.@value)
 			if(child.@value == '$#UDEPLOY-' + props.alias + '#$')
 			{
-				println"found a match"
+				log.info("found a match")
 				child.@value = props.url
 			}
 		}
@@ -111,17 +106,17 @@ class InternalBindBluemixComponentToApprendaApp
 		def printer = new XmlNodePrinter(new PrintWriter(s))
 		printer.preserveWhitespace = true
 		printer.print(xml)
-		println s
+		log.info(s)
 		def filewriter = new FileWriter(file)
 		def w = new XmlNodePrinter(new PrintWriter(filewriter))
 		w.preserveWhitespace = true
 		w.print(xml)
 	}
 	
-	private def UpdateDockerFile(file, props)
-	{
-		println "Unimplemented method"
-	}
+	//private def UpdateDockerFile(file, props)
+	//{
+	//	log.info("Unimplemented method")
+	//}
 		
 	final def workDir = new File('.').canonicalFile;
 	def commandHelper = new CommandHelper(workDir);
@@ -131,16 +126,16 @@ class InternalBindBluemixComponentToApprendaApp
 		try {
 			def curPath = System.getenv("PATH");
 			def pluginHome = new File(System.getenv("PLUGIN_HOME"))
-			println "Setup of path using plugin home: " + pluginHome;
+			log.info("Setup of path using plugin home: " + pluginHome)
 			def binDir = new File(pluginHome, "bin")
 			def newPath = curPath+":"+binDir.absolutePath;
-			commandHelper.addEnvironmentVariable("PATH", newPath);
+			commandHelper.addEnvironmentVariable("PATH", newPath)
 			def cfHome = new File(props['PLUGIN_INPUT_PROPS']).parentFile
-			println "Setting CF_HOME to: " + cfHome;
+			log.info("Setting CF_HOME to: " + cfHome)
 			commandHelper.addEnvironmentVariable("CF_HOME", cfHome.toString());
-		} catch(Exception e){
-			println "ERROR setting path: ${e.message}"
-			throw new Exception(e)
+		} catch(e){
+			log.error("ERROR setting path: ${e.message}")
+			return null
 		}
 		try {
 			def commandArgs = [props.pathToCF, "api", props.api];
@@ -148,9 +143,9 @@ class InternalBindBluemixComponentToApprendaApp
 				commandArgs << "--skip-ssl-validation"
 			}
 			commandHelper.runCommand("Setting BlueMix target api", commandArgs);
-		} catch(Exception e){
-			println "ERROR setting api: ${e.message}"
-			throw new Exception(e)
+		} catch(e){
+			log.info("ERROR setting api: ${e.message}")
+			return null
 		}
 		try{
 			// login
@@ -177,17 +172,17 @@ class InternalBindBluemixComponentToApprendaApp
 					appinfo += line
 				}})
 			// ok cool, it returns a bunch of useful stuff, let's parse it into a groovy dict so we can use it later.
-			println "appinfo: " + appinfo
+			log.info("appinfo: " + appinfo)
 			appinfo = appinfo[(appinfo.indexOf('state:'))..(appinfo.indexOf('last:')-1)]
 			// ok let's start processing the output
 			def outputList = [:]
 			outputList.put('state', (appinfo[6..(appinfo.indexOf('instances:')-1)]).trim())
 			outputList.put('urls', (appinfo[(appinfo.indexOf('urls:')+5)..(appinfo.indexOf('last uploaded:')-1)]).trim())
-			println outputList
+			log.info(outputList)
 			return outputList		
-		}catch(Exception e)
+		}catch(e)
 		{
-			println e
+			log.error(e)
 			return null
 		}
 	}
@@ -200,12 +195,12 @@ try
 	def applicationInfo = internal.GetBluemixComponentInfo(props)
 	if(applicationInfo == null)
 	{
-		println "Error collecting BlueMix information, check the inner stack trace."
+		log.info("Error collecting BlueMix information, check the inner stack trace.")
 		System.exit 1
 	}
 	if(applicationInfo.state != 'started')
 	{
-		println "Your BlueMix app is currently not in a running state, check to make sure your app is OK and retry deployment."
+		log.info("Your BlueMix app is currently not in a running state, check to make sure your app is OK and retry deployment.")
 		System.exit 1
 	}
 	props.put('url', applicationInfo.urls)
@@ -214,8 +209,7 @@ try
 }
 catch(FileNotFoundException e)
 {
-	println "Could not load deployment manifest file, check to make sure your build includes this file."
-	e.printStackTrace()
+	log.error("Could not load deployment manifest file, check to make sure your build includes this file.", e)
 	System.exit 1
 }
 

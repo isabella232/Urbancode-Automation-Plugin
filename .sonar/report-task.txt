@@ -1,0 +1,5 @@
+projectKey=apprenda-urbancode
+serverUrl=http://localhost:9013
+dashboardUrl=http://localhost:9013/dashboard/index/apprenda-urbancode
+ceTaskId=AVI46Emc_TZpcLV0nqyV
+ceTaskUrl=http://localhost:9013/api/ce/task?id=AVI46Emc_TZpcLV0nqyV

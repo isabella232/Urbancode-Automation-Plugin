@@ -13,8 +13,6 @@
  *
  */
 package main.java.urbancode
-
-import groovy.lang.Closure;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

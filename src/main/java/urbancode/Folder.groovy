@@ -11,9 +11,6 @@
 */
 package main.java.urbancode
 
-import java.util.Map;
-
-
 class Folder {
     def id
     def name
@@ -34,6 +31,11 @@ class Folder {
             return false
         }
     }
+	
+	int hashCode()
+	{
+		return 0
+	}
 
     public String toString() {
         return "[id:$id, name:$name, parent:$parentId, children:${children.keySet()}]"

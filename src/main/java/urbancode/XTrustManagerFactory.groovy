@@ -10,12 +10,8 @@
 * GSA ADP Schedule Contract with IBM Corp.
 */
 package main.java.urbancode
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.net.ssl.ManagerFactoryParameters;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactorySpi;

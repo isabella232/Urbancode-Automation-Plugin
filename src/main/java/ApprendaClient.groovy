@@ -1,7 +1,9 @@
 package main.java;
 import groovyx.net.http.RESTClient
 import static groovyx.net.http.ContentType.*
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class ApprendaClient {
 	
 	static def client = null
@@ -36,9 +38,9 @@ class ApprendaClient {
 		client.defaultRequestHeaders.'ApprendaSessionToken' = token
 		return client
 		}
-		catch (Exception e)
+		catch (e)
 		{
-			println "Caught error during initialization: " + e
+			log.error("Caught error during initialization: " + e)
 		}
 	}
 	
@@ -49,9 +51,10 @@ class ApprendaClient {
 		getInstance(props)
 		return client.get(path:'/developer/api/v1/apps/' + props.AppAlias)
 		}
-		catch (Exception e)
+		catch (e)
 		{
-			throw new Exception("Error caught attempting to retrieve application info.", e)
+			log.error("Error caught attempting to retrieve application info.", e)
+			return null
 		}
 	}
 	
@@ -85,13 +88,8 @@ class ApprendaClient {
 		getInstance(props)
 		return client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=demote")
 	}
-
-	static def NewApplication(props)
-	{
-		return NewApplication(props, 'v1')
-	}
 	
-	static def NewApplication(props, version)
+	static def NewApplication(props)
 	{
 		getInstance(props)
 		def reqbody = ["Name":props.AppAlias,"Alias":props.AppAlias,"Description":"Created by Apprenda|UrbanCode Deploy"]

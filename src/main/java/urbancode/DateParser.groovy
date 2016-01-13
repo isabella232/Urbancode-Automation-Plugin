@@ -10,9 +10,10 @@
 * GSA ADP Schedule Contract with IBM Corp.
 */
 package main.java.urbancode
-
+import groovy.util.logging.Slf4j
 import java.text.SimpleDateFormat
 
+@Slf4j
 public class DateParser {
 
     private final def DATE_FORMATS = [
@@ -63,6 +64,7 @@ public class DateParser {
                     return format.parse(value)
                 }
                 catch (java.text.ParseException e) {
+					log.error(e)
                 }
             }
             throw new IllegalArgumentException("Unrecognized date format $value")

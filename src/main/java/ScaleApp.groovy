@@ -1,9 +1,10 @@
 package main.java
-import groovyx.net.http.RESTClient
-import main.java.urbancode.AirPluginTool;
-
+import main.java.exceptions.ApprendaRuntimeException;
+import main.java.urbancode.AirPluginTool
+import groovy.util.logging.Slf4j
 import static groovyx.net.http.ContentType.*
 
+@Slf4j
 class InternalScaleApp
 {
 	def PerformScaleAction(props, version)
@@ -15,11 +16,11 @@ class InternalScaleApp
 			// make sure it comes back 204, else throw error
 			if(scaleResp.status != 204)
 			{
-				throw new Exception("Scaling failed. Contact your platform operator for assistance.")
+				throw new ApprendaRuntimeException("Scaling failed. Contact your platform operator for assistance.")
 			}
-		}catch(Exception e)
+		}catch(e)
 		{
-			throw new Exception("Exception occurred during scaling", e)
+			throw new ApprendaRuntimeException("Exception occurred during scaling", e)
 		}
 
 	}
@@ -30,22 +31,21 @@ final def props = apTool.getStepProperties()
 try
 {
 	def getApps = ApprendaClient.GetApplicationInfo(props)
-	println getApps
+	log.info(getApps)
 	def version = getApps.currentVersion.alias
 	if(getApps.currentVersion.stage != 'Published')
 	{
-		println "This application is not running in published, and scaling for non-published apps is currently not supported."
+		log.error("This application is not running in published, and scaling for non-published apps is currently not supported.")
 		System.exit(1)
 	}
 	def components = ApprendaClient.GetComponentInfo(props, version)
-	println components.getData()
-	println "Starting scale for component: " + props.ComponentAlias
+	log.info(components.getData())
+	log.info("Starting scale for component: " + props.ComponentAlias)
 	def output = InternalScaleApp().PerformScaleAction(props, version)
-	println output
+	log.info(output)
 }
-catch (Exception e)
+catch (e)
 {
-	println e
-	println "Could not scale component for application, please refer to the error messages and exceptions for more information."
+	log.error("Could not scale component for application, please refer to the error messages and exceptions for more information.",e)
 	System.exit(1)	
 }

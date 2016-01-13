@@ -1,7 +1,9 @@
 package test.java
-import spock.lang.Shared
+import groovy.util.logging.Slf4j
 import spock.lang.Specification
 import main.java.*
+
+@Slf4j
 class ScaleAppTests extends Specification {
 	
 	def testProperties = [ApprendaURL:'https://apps.apprenda.heineken',
@@ -21,9 +23,9 @@ class ScaleAppTests extends Specification {
 			def promoteAppProperties = testProperties
 			promoteAppProperties.AppAlias = 'scaleApp'
 			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
-			def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			//def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			//def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
 			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
 			def scaleApp = ApprendaClient.SetInstanceCount(promoteAppProperties, 'v1')
 		expect:
@@ -32,7 +34,7 @@ class ScaleAppTests extends Specification {
 			promote2.status == 200
 			scaleApp.status == 204
 		cleanup:
-			def deleteResponse = ApprendaClient.DeleteApplication(promoteAppProperties)
+			ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
 
 	
