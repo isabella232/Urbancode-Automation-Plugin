@@ -1,7 +1,8 @@
 package main.java
-import main.java.exceptions.ApprendaRuntimeException;
 import main.java.urbancode.AirPluginTool
 import groovy.util.logging.Slf4j
+import groovyx.net.http.HttpResponseException;
+
 import static groovyx.net.http.ContentType.*
 
 @Slf4j
@@ -16,11 +17,12 @@ class InternalScaleApp
 			// make sure it comes back 204, else throw error
 			if(scaleResp.status != 204)
 			{
-				throw new ApprendaRuntimeException("Scaling failed. Contact your platform operator for assistance.")
+				throw new HttpResponseException("Scaling failed. Contact your platform operator for assistance.")
 			}
 		}catch(e)
 		{
-			throw new ApprendaRuntimeException("Exception occurred during scaling", e)
+			log.error("Issue encountered during scaling action", e)
+			throw e
 		}
 
 	}
@@ -36,7 +38,8 @@ try
 	if(getApps.currentVersion.stage != 'Published')
 	{
 		log.error("This application is not running in published, and scaling for non-published apps is currently not supported.")
-		System.exit(1)
+		//System.exit(1)
+		throw e
 	}
 	def components = ApprendaClient.GetComponentInfo(props, version)
 	log.info(components.getData())
@@ -47,5 +50,6 @@ try
 catch (e)
 {
 	log.error("Could not scale component for application, please refer to the error messages and exceptions for more information.",e)
-	System.exit(1)	
+	//System.exit(1)	
+	throw e
 }

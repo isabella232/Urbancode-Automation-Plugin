@@ -1,17 +1,18 @@
 package test.java
+import spock.lang.IgnoreRest
 import spock.lang.Specification
 import groovy.util.logging.Slf4j
 import main.java.ApprendaClient
 
 @Slf4j
-class ApprendaClientTests extends Specification {
+class ApprendaClientTest extends Specification {
 	def testProperties = [ApprendaURL:'https://apps.apprenda.heineken',
 		ApprendaUser:'fluffy@apprenda.com',
 		ApprendaPassword:'password',
 		TenantAlias:'warkittens',
 		SelfSignedFlag:true,
 		AppAlias:'apprendazon',
-		ArchiveName:'testapps/apprendazon-1.0.zip',
+		ArchiveName:'testapps/TimeCard.zip',
 		Stage:'definition']
 	
 	// First tests relate to make sure our Apprenda Client is working properly.
@@ -39,9 +40,8 @@ class ApprendaClientTests extends Specification {
 		setup:
 			testProperties.AppAlias = 'aoisnfsaod'
 			def data = ApprendaClient.GetApplicationInfo(testProperties)
-			log.info(data)
 		expect:
-			data != null
+			data.status == 404
 	}
 	
 	def TestGetVersionInfo()
@@ -58,8 +58,8 @@ class ApprendaClientTests extends Specification {
 		setup:
 			def newAppProperties = testProperties
 			newAppProperties.AppAlias = 'newapplication'
-			def response = ApprendaClient.NewApplication(newAppProperties, 'v1')
-			def response2 = ApprendaClient.NewApplication(newAppProperties, 'v1')
+			def response = ApprendaClient.NewApplication(newAppProperties)
+			def response2 = ApprendaClient.NewApplication(newAppProperties)
 			def data = ApprendaClient.GetApplicationInfo(newAppProperties)
 		expect:
 			response.status == 201
@@ -67,7 +67,7 @@ class ApprendaClientTests extends Specification {
 			response2.status == 409
 			data.getData().alias == 'newapplication'
 		cleanup:
-			DeleteApplication(newAppProperties)
+			ApprendaClient.DeleteApplication(newAppProperties)
 	}
 	
 	def TestDeleteApplication()
@@ -75,7 +75,7 @@ class ApprendaClientTests extends Specification {
 		setup:
 			def newAppProperties = testProperties
 			newAppProperties.AppAlias = 'apptobedeleted'
-			def newApp = ApprendaClient.NewApplication(newAppProperties, 'v1')
+			def newApp = ApprendaClient.NewApplication(newAppProperties)
 			def data = ApprendaClient.GetApplicationInfo(newAppProperties)
 			def deleteApp = ApprendaClient.DeleteApplication(newAppProperties)
 			def data2 = ApprendaClient.GetApplicationInfo(newAppProperties)
@@ -90,7 +90,7 @@ class ApprendaClientTests extends Specification {
 		setup:
 			def patchAppProperties = testProperties
 			patchAppProperties.AppAlias = 'patchApplication'
-			def response = ApprendaClient.NewApplication(patchAppProperties, 'v1')
+			def response = ApprendaClient.NewApplication(patchAppProperties)
 			def patch = ApprendaClient.PatchApplication(patchAppProperties, 'v1')
 		expect:
 			response.status == 201
@@ -104,16 +104,53 @@ class ApprendaClientTests extends Specification {
 		setup:
 			def promoteAppProperties = testProperties
 			promoteAppProperties.AppAlias = 'promoteApplication'
-			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
-			//def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			def response = ApprendaClient.NewApplication(promoteAppProperties)
+			ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			// badPromote: try to "promote" to Definition
+			def badPromote = ApprendaClient.Promote(promoteAppProperties, 'v1')
+			// promote to Sandbox
+			promoteAppProperties.Stage = 'sandbox'
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			//def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			log.info(promote.status.toString())
+			log.info(promote.getData().toString())
+			// demote it back to definition
 			def demote = ApprendaClient.Demote(promoteAppProperties, 'v1')
-			//def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			log.info(demote.status.toString())
+			log.info(demote.getData().toString())
+			// and then test the promotion to published from definition
+			promoteAppProperties.Stage = 'published'
+			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
+			// and then "try to demote" but it shouldn't
+			def badDemote = ApprendaClient.Demote(promoteAppProperties, 'v1')
+		expect:
+			response.status == 201
+			badPromote.status == 400
+			promote.status == 200
+			demote.status == 200
+			promote2.status == 200
+			badDemote.status == 400
+		cleanup:
+			ApprendaClient.DeleteApplication(promoteAppProperties)
+	}
+
+	def TestBlindPromote()
+	{
+		setup:
+			def promoteAppProperties = testProperties
+			promoteAppProperties.AppAlias = 'noStageApp'
+			def response = ApprendaClient.NewApplication(promoteAppProperties)
+			ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			// test a blind promote from definition to sandbox
+			promoteAppProperties.Stage = null
+			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
+			// this is insane. the property changes are persisted in the method later.
+			promoteAppProperties.Stage = null
+			// test a blind promote from sandbox to published
+			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
 		expect:
 			response.status == 201
 			promote.status == 200
-			demote.status == 200
+			promote2.status == 200
 		cleanup:
 			ApprendaClient.DeleteApplication(promoteAppProperties)
 	}
@@ -123,26 +160,18 @@ class ApprendaClientTests extends Specification {
 		setup:
 			def promoteAppProperties = testProperties
 			promoteAppProperties.AppAlias = 'promoteApplication'
-			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
-			//def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			def response = ApprendaClient.NewApplication(promoteAppProperties)
+			ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
+			promoteAppProperties.Stage = 'Published'
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			//def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
-			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			//def data2 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			log.info(promote.getData().toString())
 			def newVersion = ApprendaClient.PostNewVersion(promoteAppProperties, 'v2')
-			//def patch2 = ApprendaClient.PatchApplication(promoteAppProperties, 'v2')
-			def promote3 = ApprendaClient.Promote(promoteAppProperties, 'v2')
-			//def data3 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
-			def promote4 = ApprendaClient.Promote(promoteAppProperties, 'v2')
-			//def data4 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
+			def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v2')
 		expect:
 			response.status == 201
 			promote.status == 200
-			promote2.status == 200
 			newVersion.status == 201
-			promote3.status == 200
-			promote4.status == 200
-			// we'll do tests with the data later.
+			patch.status == 200
 		cleanup:
 			ApprendaClient.DeleteApplication(promoteAppProperties)
 	}

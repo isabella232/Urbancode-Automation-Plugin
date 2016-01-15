@@ -1,7 +1,10 @@
 package test.java;
 import spock.lang.Specification
+
+import spock.lang.Ignore;
+
 import main.java.*
-public class BlueMixPushApplicationTests extends Specification {
+public class BlueMixPushApplicationTest extends Specification {
 	def testProps = [api:'https://api.ng.bluemix.net',
 		appName:'dutronflask',
 		buildpack:'https://github.com/cloudfoundry/python-buildpack',
@@ -25,6 +28,7 @@ public class BlueMixPushApplicationTests extends Specification {
 		user:'cdutra@apprenda.com',
 		password:'Meepster23']
 	
+	@Ignore
 	def TestDeployment()
 	{
 		setup:

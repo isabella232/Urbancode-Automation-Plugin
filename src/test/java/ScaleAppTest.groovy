@@ -1,10 +1,11 @@
 package test.java
 import groovy.util.logging.Slf4j
+import spock.lang.Ignore
 import spock.lang.Specification
 import main.java.*
 
 @Slf4j
-class ScaleAppTests extends Specification {
+class ScaleAppTest extends Specification {
 	
 	def testProperties = [ApprendaURL:'https://apps.apprenda.heineken',
 		ApprendaUser:'fluffy@apprenda.com',
@@ -17,17 +18,18 @@ class ScaleAppTests extends Specification {
 		ComponentAlias:'ui-root',
 		InstanceCount:3]
 	
+	@Ignore
 	def TestInstanceScaleUp()
 	{
 		setup:
 			def promoteAppProperties = testProperties
 			promoteAppProperties.AppAlias = 'scaleApp'
-			def response = ApprendaClient.NewApplication(promoteAppProperties, 'v1')
+			def response = ApprendaClient.NewApplication(promoteAppProperties)
 			//def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
-			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
+			def promote = ApprendaClient.Promote(promoteAppProperties)
 			//def data1 = ApprendaClient.GetApplicationInfo(promoteAppProperties)
-			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			def scaleApp = ApprendaClient.SetInstanceCount(promoteAppProperties, 'v1')
+			def promote2 = ApprendaClient.Promote(promoteAppProperties)
+			def scaleApp = ApprendaClient.SetInstanceCount(promoteAppProperties)
 		expect:
 			response.status == 201
 			promote.status == 200

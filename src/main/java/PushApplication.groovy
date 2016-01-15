@@ -1,12 +1,12 @@
 #!/usr/bin/env groovy
 package main.java
-import main.java.exceptions.CFRuntimeException;
 import main.java.urbancode.CommandHelper
 import groovy.util.logging.Slf4j
 
 @Slf4j
 class InternalPushApplication
 {
+	
 	def deployAppToBlueMix(props)
 	{
 		def workDir = new File('.').canonicalFile;
@@ -19,26 +19,27 @@ class InternalPushApplication
 			logout(props, commandHelper)
 		}catch(e)
 		{
-			log.error(e)
-			System.exit(1)
+			log.error("Error:", e)
+			//System.exit(1)
+			throw e
 		}
 	}
 	
 	static private def setupPath(props, commandHelper)
 	{
 		try {
-			def curPath = System.getenv("PATH");
+			def curPath = System.getenv("PATH")
 			def pluginHome = new File(System.getenv("PLUGIN_HOME"))
-			log.info("Setup of path using plugin home: " + pluginHome)
+			//log.info("Setup of path using plugin home: " + pluginHome)
 			def binDir = new File(pluginHome, "bin")
 			def newPath = curPath+":"+binDir.absolutePath
 			commandHelper.addEnvironmentVariable("PATH", newPath)
 			def cfHome = new File(props['PLUGIN_INPUT_PROPS']).parentFile
-			log.info("Setting CF_HOME to: " + cfHome)
+			//log.info("Setting CF_HOME to: " + cfHome)
 			commandHelper.addEnvironmentVariable("CF_HOME", cfHome.toString())
 		} catch(e){
-			log.info("ERROR setting path: ${e.message}")
-			throw new CFRuntimeException(e)
+			log.error("ERROR setting path: ${e.message}")
+			throw e
 		}
 	}
 	
@@ -46,14 +47,14 @@ class InternalPushApplication
 	{
 		// Set cf api
 		try {
-			def commandArgs = [props.pathToCF, "api", props.api];
+			def commandArgs = [props.pathToCF, "api", props.api]
 			if (props.selfSigned) {
 				commandArgs << "--skip-ssl-validation"
 			}
-			commandHelper.runCommand("Setting BlueMix target api", commandArgs);
+			commandHelper.runCommand("Setting BlueMix target api", commandArgs)
 		} catch(e){
 			log.error("ERROR setting api: ${e.message}")
-			throw new CFRuntimeException(e)
+			throw e
 		}
 		
 		// Authenticate with user and password
@@ -62,7 +63,7 @@ class InternalPushApplication
 			commandHelper.runCommand("Authenticating with Bluemix", commandArgs);
 		} catch(e){
 			log.error("ERROR authenticating : ${e.message}")
-			throw new CFRuntimeException(e)
+			throw e
 		}
 		
 		// Set target org
@@ -71,7 +72,7 @@ class InternalPushApplication
 			commandHelper.runCommand("Setting BlueMix target organization", commandArgs);
 		} catch(e){
 			log.error("ERROR setting target organization : ${e.message}")
-			throw new CFRuntimeException(e)
+			throw e
 		}
 		
 		// Ensure space exists. create-space does nothing if space
@@ -81,7 +82,7 @@ class InternalPushApplication
 			commandHelper.runCommand("Creating BlueMix space", commandArgs);
 		} catch(e){
 			log.error("ERROR creating space : ${e.message}")
-			throw new CFRuntimeException(e)
+			throw e
 		}
 		
 		// Set target space
@@ -90,7 +91,7 @@ class InternalPushApplication
 			commandHelper.runCommand("Setting BlueMix target space", commandArgs);
 		} catch(e){
 			log.error("ERROR setting target space : ${e.message}")
-			throw new CFRuntimeException(e)
+			throw e
 		}
 	}
 	
@@ -173,7 +174,7 @@ class InternalPushApplication
 			commandHelper.runCommand("Deploying BlueMix application", commandArgs);
 		} catch(e){
 			log.error("ERROR authenticating : ${e.message}")
-			throw new CFRuntimeException(e);
+			throw e
 		}
 	}
 
@@ -184,7 +185,7 @@ class InternalPushApplication
 			commandHelper.runCommand("Logout from BlueMix system", commandArgs);
 		} catch(e){
 			log.error("ERROR logging out : ${e.message}")
-			throw new CFRuntimeException(e)
+			throw e
 		}
 	}	
 }
@@ -196,16 +197,16 @@ try {
 	props.load(inputPropsStream);
 }
 catch (IOException e) {
-	log.error(e)
-	throw new IOException(e);
+	throw e;
 }
 try{
 	def internal = new InternalPushApplication()
 	internal.deployAppToBlueMix(props)
-	System.exit(0);
+	//System.exit(0);
+	return
 }
 catch(e)
 {
-	log.error(e)
-	System.exit(1);
+	throw e
+	//System.exit(1);
 }

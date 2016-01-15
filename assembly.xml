@@ -8,6 +8,18 @@
        <includeBaseDirectory>false</includeBaseDirectory>
        <fileSets>
        		<fileSet>
+       			 <directory>src/main/java</directory>
+       			 <outputDirectory>src/main/java</outputDirectory>
+       		</fileSet>
+       		<fileSet>
+       			<directory>src/main/java/exceptions</directory>
+       			<outputDirectory>src/main/java/exceptions</outputDirectory>
+       		</fileSet>
+       		<fileSet>
+       			<directory>src/main/java/urbancode</directory>
+       			<outputDirectory>src/main/java/urbancode</outputDirectory>
+       		</fileSet>
+       		<fileSet>
        			 <directory>src/main/resources/doc</directory>
        			 <outputDirectory>/doc</outputDirectory>
        		</fileSet>
@@ -28,8 +40,7 @@
             <file>
             	 <outputDirectory>/</outputDirectory>
             	 <source>src/main/resources/plugin/upgrade.xml</source>
-            </file>  
-            
+            </file>
        </files>
        <dependencySets>  
             <dependencySet>  

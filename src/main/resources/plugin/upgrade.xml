@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin-upgrade xmlns="http://www.urbancode.com/UpgradeXMLSchema_v1" xmlns:server="http://www.urbancode.com/PluginServerXMLSchema_v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<migrate to-version="4">
-		<migrate-command name="Deploy to Apprenda"></migrate-command>
+	<migrate to-version="5">
+		<migrate-command name="Deploy to Apprenda">
+		</migrate-command>
 		<migrate-command name="Deploy BlueMix Component">
 			<migrate-properties>
 				<migrate-property name="pathToCF"/>
@@ -17,12 +18,7 @@
 				<migrate-property name="pathToCF"/>
 			</migrate-properties>
 		</migrate-command>
-		<migrate-command name="Map Route to BlueMix App"></migrate-command>
-		<migrate-command name="Unmap Route to BlueMix App"></migrate-command>
-		<migrate-command name="Delete BlueMix App"></migrate-command>
-		<migrate-command name="Start BlueMix App"></migrate-command>
-		<migrate-command name="Stop BlueMix App"></migrate-command>
-		<migrate-command name="Restart BlueMix App"></migrate-command>
-		<migrate-command name="Scale Apprenda App"></migrate-command>
+		<migrate-command name="Scale Apprenda App">
+		</migrate-command>
 	</migrate>
 </plugin-upgrade>

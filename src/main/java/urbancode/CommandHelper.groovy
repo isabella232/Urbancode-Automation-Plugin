@@ -161,7 +161,7 @@ public class CommandHelper {
     public int runCommand(def message, def command, Closure closure, String input) {
         command[0] = sanitizeExecutable(command[0])
         pb.command(command as String[])
-        log.info()
+        log.info("\n")
         if (message) {
             log.info(message)
         }

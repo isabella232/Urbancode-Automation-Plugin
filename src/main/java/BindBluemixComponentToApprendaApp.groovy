@@ -134,7 +134,7 @@ class InternalBindBluemixComponentToApprendaApp
 			log.info("Setting CF_HOME to: " + cfHome)
 			commandHelper.addEnvironmentVariable("CF_HOME", cfHome.toString());
 		} catch(e){
-			log.error("ERROR setting path: ${e.message}")
+			("ERROR setting path: ${e.message}")
 			return null
 		}
 		try {
@@ -178,11 +178,10 @@ class InternalBindBluemixComponentToApprendaApp
 			def outputList = [:]
 			outputList.put('state', (appinfo[6..(appinfo.indexOf('instances:')-1)]).trim())
 			outputList.put('urls', (appinfo[(appinfo.indexOf('urls:')+5)..(appinfo.indexOf('last uploaded:')-1)]).trim())
-			log.info(outputList)
 			return outputList		
 		}catch(e)
 		{
-			log.error(e)
+			log.error("Exception found: ", e)
 			return null
 		}
 	}
@@ -205,11 +204,13 @@ try
 	}
 	props.put('url', applicationInfo.urls)
 	//internal.UpdateConfigurationFiles(props)
-	System.exit(0)
+	//System.exit(0)
+	return
 }
 catch(FileNotFoundException e)
 {
 	log.error("Could not load deployment manifest file, check to make sure your build includes this file.", e)
-	System.exit 1
+	//System.exit 1
+	throw e
 }
 

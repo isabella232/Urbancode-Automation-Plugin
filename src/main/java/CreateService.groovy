@@ -46,7 +46,8 @@ try {
 	commandHelper.addEnvironmentVariable("CF_HOME", cfHome.toString());
 } catch( e){
 	log.error("ERROR setting path: ${e.message}",e)
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
 // Set cf api
@@ -58,7 +59,8 @@ try {
 	commandHelper.runCommand("Setting cf target api", commandArgs);
 } catch( e){
 	log.error("ERROR setting api: ${e.message}",e)
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
 // Authenticate with user and password
@@ -67,7 +69,8 @@ try {
 	commandHelper.runCommand("Authenticating with CloudFoundry", commandArgs);
 } catch(e){
 	log.error("ERROR authenticating : ${e.message}",e)
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
 // Set target org
@@ -76,7 +79,8 @@ try {
 	commandHelper.runCommand("Setting CloufFoundry target organization", commandArgs);
 } catch(e){
 	log.error("ERROR setting target organization : ${e.message}",e)
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
 // Ensure space exists. create-space does nothing if space
@@ -86,7 +90,8 @@ try {
 	commandHelper.runCommand("Creating CloufFoundry space", commandArgs);
 } catch(e){
 	log.error("ERROR creating space : ${e.message}", e)
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
 // Set target space
@@ -95,7 +100,8 @@ try {
 	commandHelper.runCommand("Setting CloufFoundry target space", commandArgs);
 } catch(e){
 	log.error("ERROR setting target space : ${e.message}")
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
 // Execute create-service
@@ -104,7 +110,8 @@ try {
 	commandHelper.runCommand("Executing CF create-service", commandArgs);
 } catch(e){
 	log.error("ERROR executing create-service : ${e.message}")
-	System.exit(1);
+	//System.exit(1);
+	throw e
 }
 
 // Logout
@@ -113,7 +120,9 @@ try {
 	commandHelper.runCommand("Logout from CloudFoundry system", commandArgs);
 } catch(e){
 	log.error("ERROR logging out : ${e.message}")
-	System.exit(1)
+	//System.exit(1)
+	throw e
 }
 
-System.exit(0);
+//System.exit(0);
+return

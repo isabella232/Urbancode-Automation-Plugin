@@ -10,9 +10,6 @@
 * GSA ADP Schedule Contract with IBM Corp.
 */
 package main.java.urbancode;
-
-import main.java.exceptions.UrbancodeRuntimeException
-
 public class AirPluginTool {
 
     //**************************************************************************
@@ -45,7 +42,8 @@ public class AirPluginTool {
             props.load(inputPropsStream);
         }
         catch (IOException e) {
-            throw new UrbancodeRuntimeException(e);
+			log.error(e)
+            throw e
         }
         finally {
             inputPropsStream.close();

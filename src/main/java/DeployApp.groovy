@@ -44,6 +44,11 @@ public class InternalDeployApp {
 			return null
 		}
 	}
+	
+	public static logFromMain(exception)
+	{
+		log.error("We hit an issue.", exception)
+	}
 }
 
 	final def apTool = new AirPluginTool(this.args[0], this.args[1])
@@ -51,7 +56,7 @@ public class InternalDeployApp {
 	try {
 		internal = new InternalDeployApp()
 		def getApps = ApprendaClient.GetApplicationInfo(props)
-		
+		log.info(getApps.getData())
 		// inject here that if we don't have a new application, we need to create it.
 		if(getApps == null)
 		{
@@ -76,7 +81,10 @@ public class InternalDeployApp {
 		}
 	}
 	catch (e) {
-		log.error(e)
-		System.exit 1
+		// Sadly, slf4j doesn't like to log from a main closure in groovy... so we do some fun semantics here.
+		InternalDeployApp.logFromMain(e)
+		//System.exit 1
+		throw e
 	}
-	System.exit 0
+	//System.exit 0
+	return

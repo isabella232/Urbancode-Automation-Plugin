@@ -1,13 +1,14 @@
 package test.java
-import spock.lang.IgnoreRest;
+import spock.lang.IgnoreRest
 import spock.lang.Specification
 import com.apprenda.integrations.urbancode.*
 import org.custommonkey.xmlunit.*
+import spock.lang.Ignore
 import com.apprenda.integrations.urbancode.util.*
 import main.java.InternalBindBluemixComponentToApprendaApp
 import groovy.util.logging.Slf4j
 @Slf4j
-class BindComponentTests extends Specification {
+class BindComponentTest extends Specification {
 
 	def props = [
 					api:'https://api.ng.bluemix.net',
@@ -22,7 +23,7 @@ class BindComponentTests extends Specification {
 					alias: 'bluemixflask'
 				]
 	
-	
+	@Ignore
 	def TestRetrievalOfURL()
 	{
 		setup:
@@ -34,7 +35,7 @@ class BindComponentTests extends Specification {
 			appinfo.urls.equals('dutronflask.mybluemix.net')
 	}
 	
-	@IgnoreRest
+	@Ignore
 	def TestUpdateConfigFiles()
 	{
 		setup:

@@ -1,11 +1,12 @@
 package test.java
+import spock.lang.Ignore;
 import spock.lang.Shared
 import spock.lang.Specification
 import main.java.*
 import groovy.util.logging.Slf4j
 
 @Slf4j
-public class DeployAppTests extends Specification {
+public class DeployAppTest extends Specification {
 	 
 	@Shared uc1props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc1', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
 	@Shared uc2props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc2', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
@@ -16,6 +17,8 @@ public class DeployAppTests extends Specification {
 	@Shared uc7props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc7', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
 	@Shared uc8props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc8', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition'] 
 	
+	
+	@Ignore
 	def Test1vDefinition()
 	{
 		when:
@@ -28,7 +31,7 @@ public class DeployAppTests extends Specification {
 			uc1vd.targetVersion == 'v1'
 			notThrown Exception
 	}
-	
+	@Ignore
 	def Test1vSandbox()
 	{
 		when:
@@ -42,7 +45,7 @@ public class DeployAppTests extends Specification {
 			uc2vd.targetVersion == 'v1'
 			notThrown Exception
 	}
-	
+	@Ignore
 	def Test1vPublished()
 	{
 		when:
@@ -57,7 +60,7 @@ public class DeployAppTests extends Specification {
 			uc3vd.targetVersion == 'v2'
 			notThrown Exception
 	}
-	
+	@Ignore
 	def Test2vOnePublishedOneDefinition()
 	{
 		when:
@@ -74,7 +77,7 @@ public class DeployAppTests extends Specification {
 			uc4vd.targetVersion == 'v2'
 			notThrown Exception
 	}
-	
+	@Ignore
 	def Test2vOnePublishedOneSandbox()
 	{
 		when:
@@ -92,7 +95,7 @@ public class DeployAppTests extends Specification {
 			uc5vd.targetVersion == 'v2'
 			notThrown Exception
 	}
-	
+	@Ignore
 	def Test3vOnePublished2Definition()
 	{
 		when:
@@ -110,7 +113,7 @@ public class DeployAppTests extends Specification {
 			uc6vd.newVersionRequired == false
 			uc6vd.targetVersion == 'v3'
 	}
-	
+	@Ignore
 	def Test3vOneOfEach()
 	{
 		when:
@@ -128,7 +131,7 @@ public class DeployAppTests extends Specification {
 			uc7vd.newVersionRequired == false
 			uc7vd.targetVersion == 'v3'
 	}
-	
+	@Ignore
 	def Test3vOnePublished2Sandbox()
 	{
 		when:
@@ -148,7 +151,7 @@ public class DeployAppTests extends Specification {
 			uc8vd.newVersionRequired == false
 			uc8vd.targetVersion == 'v3'
 	}
-	
+	@Ignore
 	def TestFailureCase1()
 	{
 		// tests when we get bad data from Apprenda

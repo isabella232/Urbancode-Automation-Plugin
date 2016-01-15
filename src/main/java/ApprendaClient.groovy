@@ -22,7 +22,7 @@ class ApprendaClient {
 		{
 		def client = new RESTClient(props.ApprendaURL)
 		client.handler.failure = client.handler.success
-		if (props.SelfSignedFlag)
+		if (props.SelfSignedFlag)	
 		{
 			client.ignoreSSLIssues()
 		}
@@ -40,7 +40,7 @@ class ApprendaClient {
 		}
 		catch (e)
 		{
-			log.error("Caught error during initialization: " + e)
+			log.error("Caught error during initialization: ", e)
 		}
 	}
 	
@@ -68,19 +68,43 @@ class ApprendaClient {
 	{
 		getInstance(props)
 		return client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias, body: [Name: "Version " + targetVersion + " - created by Urbancode", Alias: targetVersion], requestContentType: JSON)
-	}
+	}	
 	
 	static def PatchApplication(props, version)
 	{
+		def stage = ''
+		if(props.Stage == null)
+		{
+			def versionInfo = this.GetApplicationInfo(props)
+			log.info(versionInfo.getData().toString())
+			stage = versionInfo.getData().currentVersion.stage
+		}
+		else
+		{
+			stage = props.Stage
+		}
 		getInstance(props)
 		def archive = new File(props.ArchiveName)
 		return client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + props.Stage.toLowerCase(), body:archive.bytes, requestContentType:BINARY)
 	}
-	
+			
 	static def Promote(props, version)
 	{
+		def stage = ''
+		if(props.Stage == null)
+		{
+			def versionInfo = this.GetApplicationInfo(props)
+			log.info(versionInfo.getData().toString())
+			if(versionInfo.getData().currentVersion.stage == 'Definition') { stage = 'Sandbox'}
+			else if(versionInfo.getData().currentVersion.stage == 'Sandbox') { stage = 'Published' }
+			else throw new IllegalArgumentException("Blind promote only works when your application has one version in Sandbox or Definition stage. Specify the stage and version with your request and try again.")
+		}
+		else
+		{
+			stage = props.Stage
+		}
 		getInstance(props)
-		return client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=promote&stage=" + props.Stage.toLowerCase())
+		def response = client.post(path: Constants.REST_API_PATHS.PromoteDemote + props.AppAlias + "/" + version + "?action=promote&stage=" + stage.toLowerCase())
 	}
 	
 	static def Demote(props, version)
