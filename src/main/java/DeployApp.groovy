@@ -10,12 +10,16 @@ public class InternalDeployApp {
 		def newVersionRequired = false
 		def targetVersion = versionInfo.currentVersion.alias
 		def newVerStage = versionInfo.currentVersion.stage
+		log.info("targetVersion: " + targetVersion)
+		log.info("newVerStage: " + newVerStage)
 		if(versionInfo.currentVersion.stage == 'Definition' || versionInfo.currentVersion.stage == 'Sandbox')
 		{
+			log.info("Current version is in definition/sandbox, so we will patch v1")
 			return [newVersionRequired:false, targetVersion:'v1', newVerStage:versionInfo.currentVersion.stage]
 		}
 		else if(versionInfo.currentVersion.stage == 'Published')
 		{
+			log.info("Current version is in published, so we need to find the latest version.")
 			def oldVerNo = versionInfo.currentVersion.alias.substring(1).toInteger()
 			def newVerNo = oldVerNo			
 			def versions = ApprendaClient.GetVersionInfo(props)
@@ -29,7 +33,10 @@ public class InternalDeployApp {
 						newVersionRequired = false
 					}
 				}
-			}
+				log.info("Old Version #: " + oldVerNo)
+				log.info("New Version #: " + newVerNo)
+				log.info("Target Stage: " + newVerStage)
+			} 
 			if(newVerNo == oldVerNo && (newVerStage == 'Published'))
 			{
 				newVersionRequired = true
@@ -41,7 +48,7 @@ public class InternalDeployApp {
 		else
 		{
 			log.error("We received data we didn't expect. Exiting...")
-			return null
+			throw new IllegalArgumentException('We received malformed data: ' + versionInfo.toString)
 		}
 	}
 	

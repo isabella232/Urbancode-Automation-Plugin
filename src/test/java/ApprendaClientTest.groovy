@@ -1,21 +1,33 @@
 package test.java
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 import groovy.util.logging.Slf4j
 import main.java.ApprendaClient
+import spock.lang.Shared
 
 @Slf4j
 class ApprendaClientTest extends Specification {
-	def testProperties = [ApprendaURL:'https://apps.apprenda.heineken',
-		ApprendaUser:'fluffy@apprenda.com',
-		ApprendaPassword:'password',
-		TenantAlias:'warkittens',
-		SelfSignedFlag:true,
-		AppAlias:'apprendazon',
-		ArchiveName:'testapps/TimeCard.zip',
-		Stage:'definition']
 	
-	// First tests relate to make sure our Apprenda Client is working properly.
+	// Useful for testing different configurations. Note that for now we can only run tests on one environment at a time.
+	@Shared TestProperties = [:]
+
+	def setupSpec()
+	{
+		def props = new Properties()
+		new File("src/test/resources/testing.properties").withInputStream {
+			stream -> props.load(stream)
+		}
+		testProperties = [
+			'ApprendaURL':props["ACTProperties.ApprendaURL"],
+			'ApprendaUser':props["ACTProperties.ApprendaUser"],
+			'ApprendaPassword':props["ACTProperties.ApprendaPassword"],
+			'TenantAlias':props["ACTProperties.TenantAlias"],
+			'SelfSignedFlag':props["ACTProperties.SelfSignedFlag"],
+			'AppAlias':props["ACTProperties.AppAlias"],
+			'ArchiveName':props["ACTProperties.ArchiveName"],
+			'Stage':props["ACTProperties.Stage"]	
+			]
+	}
+	
 	def TestApprendaClientInstantiation()
 	{
 		setup:
@@ -33,29 +45,41 @@ class ApprendaClientTest extends Specification {
 			def data = ApprendaClient.GetApplicationInfo(testProperties)
 		expect:
 			data.getData().alias == 'apprendazon'
+		cleanup:
+			ApprendaClient.DeleteApplication(testProperties)
 	}
 	
 	def TestBadGetApplicationInfo()
 	{
 		setup:
-			testProperties.AppAlias = 'aoisnfsaod'
-			def data = ApprendaClient.GetApplicationInfo(testProperties)
+			def badProps1 = testProperties
+			ApprendaClient.NewApplication(testProperties)
+			badProps1.AppAlias = 'aoisnfsaod'
+			def data = ApprendaClient.GetApplicationInfo(badProps1)
 		expect:
 			data.status == 404
+		cleanup:
+			ApprendaClient.DeleteApplication(testProperties)
 	}
 	
 	def TestGetVersionInfo()
 	{
 		setup:
+			ApprendaClient.NewApplication(testProperties)
+			ApprendaClient.PatchApplication(testProperties, 'v1')
 			def data = ApprendaClient.GetVersionInfo(testProperties)
 		expect:
-			data != null
+			data.status == 200
+			data.getData() != null
+		cleanup:
+			ApprendaClient.DeleteApplication(testProperties)
 	}
 	
 	def TestNewApplication()
 	{
 		// test new app creation and then test to make sure app got created
 		setup:
+			
 			def newAppProperties = testProperties
 			newAppProperties.AppAlias = 'newapplication'
 			def response = ApprendaClient.NewApplication(newAppProperties)
@@ -63,7 +87,6 @@ class ApprendaClientTest extends Specification {
 			def data = ApprendaClient.GetApplicationInfo(newAppProperties)
 		expect:
 			response.status == 201
-			// shouldn't be able to create the same app twice
 			response2.status == 409
 			data.getData().alias == 'newapplication'
 		cleanup:
@@ -111,12 +134,8 @@ class ApprendaClientTest extends Specification {
 			// promote to Sandbox
 			promoteAppProperties.Stage = 'sandbox'
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			log.info(promote.status.toString())
-			log.info(promote.getData().toString())
 			// demote it back to definition
 			def demote = ApprendaClient.Demote(promoteAppProperties, 'v1')
-			log.info(demote.status.toString())
-			log.info(demote.getData().toString())
 			// and then test the promotion to published from definition
 			promoteAppProperties.Stage = 'published'
 			def promote2 = ApprendaClient.Promote(promoteAppProperties, 'v1')
@@ -164,7 +183,6 @@ class ApprendaClientTest extends Specification {
 			ApprendaClient.PatchApplication(promoteAppProperties, 'v1')
 			promoteAppProperties.Stage = 'Published'
 			def promote = ApprendaClient.Promote(promoteAppProperties, 'v1')
-			log.info(promote.getData().toString())
 			def newVersion = ApprendaClient.PostNewVersion(promoteAppProperties, 'v2')
 			def patch = ApprendaClient.PatchApplication(promoteAppProperties, 'v2')
 		expect:

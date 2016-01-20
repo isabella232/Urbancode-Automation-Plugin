@@ -1,5 +1,6 @@
 package test.java
-import spock.lang.Ignore;
+import spock.lang.Ignore
+import spock.lang.IgnoreRest;
 import spock.lang.Shared
 import spock.lang.Specification
 import main.java.*
@@ -8,170 +9,206 @@ import groovy.util.logging.Slf4j
 @Slf4j
 public class DeployAppTest extends Specification {
 	 
-	@Shared uc1props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc1', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc2props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc2', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc3props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc3', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc4props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc4', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc5props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc5', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc6props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc6', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc7props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc7', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition']
-	@Shared uc8props = [ApprendaURL:'https://apps.apprenda.heineken', ApprendaUser:'fluffy@apprenda.com', ApprendaPassword:'password', TenantAlias:'warkittens', SelfSignedFlag:true, AppAlias:'uc8', ArchiveLocation:'testapps/apprendazon-1.0.zip', Stage:'definition'] 
+	@Shared TestProperties = [:]
+
+	def setupSpec()
+	{
+		def props = new Properties()
+		new File("src/test/resources/testing.properties").withInputStream {
+			stream -> props.load(stream)
+		}
+		testProperties = [
+			'ApprendaURL':props["ACTProperties.ApprendaURL"],
+			'ApprendaUser':props["ACTProperties.ApprendaUser"],
+			'ApprendaPassword':props["ACTProperties.ApprendaPassword"],
+			'TenantAlias':props["ACTProperties.TenantAlias"],
+			'SelfSignedFlag':props["ACTProperties.SelfSignedFlag"],
+			'AppAlias':props["ACTProperties.AppAlias"],
+			'ArchiveName':props["ACTProperties.ArchiveName"],
+			'Stage':props["ACTProperties.Stage"]	
+			]
+	}
 	
-	
-	@Ignore
 	def Test1vDefinition()
 	{
-		when:
-			ApprendaClient.NewApplication(uc1props, 'v1')
-			ApprendaClient.PatchApplication(uc1props, 'v1')
-			def uc1data = ApprendaClient.GetApplicationInfo(uc1props)
-			def uc1vd = new InternalDeployApp().detectVersion(uc1data, uc1props)
-		then:
+		setup:
+			log.info("Starting Test Case 1")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test1vDefinition'
+			def newApp = ApprendaClient.NewApplication(instanceTest)
+			def patchApp = ApprendaClient.PatchApplication(instanceTest, 'v1')
+			def uc1data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc1vd = new InternalDeployApp().detectVersion(uc1data.getData(), instanceTest)
+		expect:
 			uc1vd.newVersionRequired == false
 			uc1vd.targetVersion == 'v1'
-			notThrown Exception
-	}
-	@Ignore
-	def Test1vSandbox()
-	{
-		when:
-			ApprendaClient.NewApplication(uc2props, 'v1')
-			ApprendaClient.PatchApplication(uc2props, 'v1')
-			ApprendaClient.Promote(uc2props, 'v1')
-			def uc2data = ApprendaClient.GetApplicationInfo(uc2props)
-			def uc2vd = new InternalDeployApp().detectVersion(uc2data, uc2props)
-		then:
-			uc2vd.newVersionRequired == false
-			uc2vd.targetVersion == 'v1'
-			notThrown Exception
-	}
-	@Ignore
-	def Test1vPublished()
-	{
-		when:
-			ApprendaClient.NewApplication(uc3props, 'v1')
-			ApprendaClient.PatchApplication(uc3props, 'v1')
-			ApprendaClient.Promote(uc3props, 'v1')
-			ApprendaClient.Promote(uc3props, 'v1')
-			def uc3data = ApprendaClient.GetApplicationInfo(uc3props)
-			def uc3vd = new InternalDeployApp().detectVersion(uc3data, uc3props)
-		then:
-			uc3vd.newVersionRequired == true
-			uc3vd.targetVersion == 'v2'
-			notThrown Exception
-	}
-	@Ignore
-	def Test2vOnePublishedOneDefinition()
-	{
-		when:
-			ApprendaClient.NewApplication(uc4props, 'v1')
-			ApprendaClient.PatchApplication(uc4props, 'v1')
-			ApprendaClient.Promote(uc4props, 'v1')
-			ApprendaClient.Promote(uc4props, 'v1')
-			ApprendaClient.PostNewVersion(uc4props, 'v2')
-			ApprendaClient.PatchApplication(uc4props, 'v2')
-			def uc4data = ApprendaClient.GetApplicationInfo(uc4props)
-			def uc4vd = new InternalDeployApp().detectVersion(uc4data, uc4props)
-		then:
-			uc4vd.newVersionRequired == false
-			uc4vd.targetVersion == 'v2'
-			notThrown Exception
-	}
-	@Ignore
-	def Test2vOnePublishedOneSandbox()
-	{
-		when:
-			ApprendaClient.NewApplication(uc5props, 'v1')
-			ApprendaClient.PatchApplication(uc5props, 'v1')
-			ApprendaClient.Promote(uc5props, 'v1')
-			ApprendaClient.Promote(uc5props, 'v1')
-			ApprendaClient.PostNewVersion(uc5props, 'v2')
-			ApprendaClient.PatchApplication(uc5props, 'v2')
-			ApprendaClient.Promote(uc5props, 'v2')
-			def uc5data = ApprendaClient.GetApplicationInfo(uc5props)
-			def uc5vd = new InternalDeployApp().detectVersion(uc5data, uc5props)
-		then:
-			uc5vd.newVersionRequired == false
-			uc5vd.targetVersion == 'v2'
-			notThrown Exception
-	}
-	@Ignore
-	def Test3vOnePublished2Definition()
-	{
-		when:
-			ApprendaClient.NewApplication(uc6props, 'v1')
-			ApprendaClient.PatchApplication(uc6props, 'v1')
-			ApprendaClient.Promote(uc6props, 'v1')
-			ApprendaClient.Promote(uc6props, 'v1')
-			ApprendaClient.PostNewVersion(uc6props, 'v2')
-			ApprendaClient.PatchApplication(uc6props, 'v2')
-			ApprendaClient.PostNewVersion(uc6props, 'v3')
-			ApprendaClient.PatchApplication(uc6props, 'v3')
-			def uc6data = ApprendaClient.GetApplicationInfo(uc6props)
-			def uc6vd = new InternalDeployApp().detectVersion(uc6data, uc6props)
-		then:
-			uc6vd.newVersionRequired == false
-			uc6vd.targetVersion == 'v3'
-	}
-	@Ignore
-	def Test3vOneOfEach()
-	{
-		when:
-			ApprendaClient.NewApplication(uc7props, 'v1')
-			ApprendaClient.PatchApplication(uc7props, 'v1')
-			ApprendaClient.Promote(uc7props, 'v1')
-			ApprendaClient.Promote(uc7props, 'v1')
-			ApprendaClient.PostNewVersion(uc7props, 'v2')
-			ApprendaClient.PatchApplication(uc7props, 'v2')
-			ApprendaClient.Promote(uc7props, 'v2')
-			ApprendaClient.PostNewVersion(uc7props, 'v3')
-			def uc7data = ApprendaClient.GetApplicationInfo(uc7props)
-			def uc7vd = new InternalDeployApp().detectVersion(uc7data, uc7props)
-		then:
-			uc7vd.newVersionRequired == false
-			uc7vd.targetVersion == 'v3'
-	}
-	@Ignore
-	def Test3vOnePublished2Sandbox()
-	{
-		when:
-			ApprendaClient.NewApplication(uc8props, 'v1')
-			ApprendaClient.PatchApplication(uc8props, 'v1')
-			ApprendaClient.Promote(uc8props, 'v1')
-			ApprendaClient.Promote(uc8props, 'v1')
-			ApprendaClient.PostNewVersion(uc8props, 'v2')
-			ApprendaClient.PatchApplication(uc8props, 'v2')
-			ApprendaClient.Promote(uc8props, 'v2')
-			ApprendaClient.PostNewVersion(uc8props, 'v3')
-			ApprendaClient.PatchApplication(uc8props, 'v3')
-			ApprendaClient.Promote(uc8props, 'v3')
-			def uc8data = ApprendaClient.GetApplicationInfo(uc8props)
-			def uc8vd = new InternalDeployApp().detectVersion(uc8data, uc8props)
-		then:
-			uc8vd.newVersionRequired == false
-			uc8vd.targetVersion == 'v3'
-	}
-	@Ignore
-	def TestFailureCase1()
-	{
-		// tests when we get bad data from Apprenda
-		setup:
-			def failure1 = ["aosdinsaf"]
-		when:
-			new InternalDeployApp().detectVersion(failure1, uc1props)
-		then:
-			thrown Exception	
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
 	}
 	
-	def cleanupSpec()
+	def Test1vSandbox()
 	{
-		ApprendaClient.DeleteApplication(uc1props)
-		ApprendaClient.DeleteApplication(uc2props)
-		ApprendaClient.DeleteApplication(uc3props)
-		ApprendaClient.DeleteApplication(uc4props)
-		ApprendaClient.DeleteApplication(uc5props)
-		ApprendaClient.DeleteApplication(uc6props)
-		ApprendaClient.DeleteApplication(uc7props)
-		ApprendaClient.DeleteApplication(uc8props)
+		setup:
+			log.info("Starting Test Case 2")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test1vSandbox'
+			ApprendaClient.NewApplication(instanceTest)
+			ApprendaClient.PatchApplication(instanceTest, 'v1')
+			ApprendaClient.Promote(instanceTest, 'v1')
+			def uc2data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc2vd = new InternalDeployApp().detectVersion(uc2data.getData(), instanceTest)
+		expect:
+			uc2vd.newVersionRequired == false
+			uc2vd.targetVersion == 'v1'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
 	}
+	
+	def Test1vPublished()
+	{
+		setup:
+			log.info("Starting Test Case 3")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test1vPublished'
+			instanceTest.Stage = null
+			ApprendaClient.NewApplication(instanceTest)
+			ApprendaClient.PatchApplication(instanceTest, 'v1')
+			def testPromoteSandbox = ApprendaClient.Promote(instanceTest, 'v1')
+			log.info(testPromoteSandbox.getData().toString())
+			def testPromotePublished = ApprendaClient.Promote(instanceTest, 'v1')
+			log.info(testPromotePublished.getData().toString())
+			def uc3data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc3vd = new InternalDeployApp().detectVersion(uc3data.getData(), instanceTest)
+		expect:
+			uc3vd.newVersionRequired == true
+			uc3vd.targetVersion == 'v2'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
+	}
+	
+	def Test2vOnePublishedOneDefinition()
+	{
+		setup:
+			log.info("Starting Test Case 4")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test2vOnePubOneDef'
+			def api1 = ApprendaClient.NewApplication(instanceTest)
+			def api2 = ApprendaClient.PatchApplication(instanceTest, 'v1')
+			ApprendaClient.Promote(instanceTest, 'v1')
+			ApprendaClient.Promote(instanceTest, 'v1')
+			ApprendaClient.PostNewVersion(instanceTest, 'v2')
+			ApprendaClient.PatchApplication(instanceTest, 'v2')
+			def uc4data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc4vd = new InternalDeployApp().detectVersion(uc4data.getData(), instanceTest)
+		expect:
+			uc4vd.newVersionRequired == false
+			uc4vd.targetVersion == 'v2'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
+	}
+	
+	def Test2vOnePublishedOneSandbox()
+	{
+		setup:
+			log.info("Starting Test Case 5")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test2vOnePubOneSand'
+			instanceTest.Stage = 'Published'
+			ApprendaClient.NewApplication(instanceTest)
+			ApprendaClient.PatchApplication(instanceTest, 'v1')
+			ApprendaClient.Promote(instanceTest, 'v1')
+			instanceTest.Stage = null
+			ApprendaClient.PostNewVersion(instanceTest, 'v2')
+			ApprendaClient.PatchApplication(instanceTest, 'v2')
+			// can't blind promote with v2, need more info.
+			instanceTest.Stage = 'Sandbox'
+			ApprendaClient.Promote(instanceTest, 'v2')
+			def uc5data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc5vd = new InternalDeployApp().detectVersion(uc5data.getData(), instanceTest)
+		expect:
+			uc5vd.newVersionRequired == false
+			uc5vd.targetVersion == 'v2'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
+	}
+	
+	def Test3vOnePublished2Definition()
+	{
+		setup:
+			log.info("Starting Test Case 6")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test3vOnePub2Def'
+			ApprendaClient.NewApplication(instanceTest)
+			ApprendaClient.PatchApplication(instanceTest, 'v1')
+			instanceTest.Stage = 'Published'
+			def promote = ApprendaClient.Promote(instanceTest, 'v1')
+			log.info("promoteTest: " + promote.getData().toString())
+			ApprendaClient.PostNewVersion(instanceTest, 'v2')
+			ApprendaClient.PatchApplication(instanceTest, 'v2')
+			ApprendaClient.PostNewVersion(instanceTest, 'v3')
+			ApprendaClient.PatchApplication(instanceTest, 'v3')
+			def uc6data = ApprendaClient.GetApplicationInfo(instanceTest)
+			log.info("appInfo: " + uc6data.getData().toString())
+			def uc6vd = new InternalDeployApp().detectVersion(uc6data.getData(), instanceTest)
+		expect:
+			uc6vd.newVersionRequired == false
+			uc6vd.targetVersion == 'v3'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
+	}
+	
+	def Test3vOneOfEach()
+	{
+		setup:
+			log.info("Starting Test Case 7")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test3vOneOfEach'
+			ApprendaClient.NewApplication(instanceTest)
+			ApprendaClient.PatchApplication(instanceTest, 'v1')
+			ApprendaClient.Promote(instanceTest, 'v1')
+			ApprendaClient.Promote(instanceTest, 'v1')
+			ApprendaClient.PostNewVersion(instanceTest, 'v2')
+			ApprendaClient.PatchApplication(instanceTest, 'v2')
+			// promote v2 to sandbox
+			instanceTest.Stage = 'Sandbox'
+			ApprendaClient.Promote(instanceTest, 'v2')
+			// put v3 in definition
+			instanceTest.Stage = 'Definition'
+			ApprendaClient.PostNewVersion(instanceTest, 'v3')
+			ApprendaClient.PatchApplication(instanceTest, 'v3')
+			def uc7data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc7vd = new InternalDeployApp().detectVersion(uc7data.getData(), instanceTest)
+		expect:
+			uc7vd.newVersionRequired == false
+			uc7vd.targetVersion == 'v3'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
+	}
+	
+	def Test3vOnePublished2Sandbox()
+	{
+		setup:
+			log.info("Starting Test Case 8")
+			def instanceTest = testProperties
+			instanceTest.AppAlias = 'Test3vOnePub2Sand'
+			ApprendaClient.NewApplication(instanceTest)
+			ApprendaClient.PatchApplication(instanceTest, 'v1')
+			instanceTest.Stage = 'Published'
+			ApprendaClient.Promote(instanceTest, 'v1')
+			ApprendaClient.PostNewVersion(instanceTest, 'v2')
+			ApprendaClient.PatchApplication(instanceTest, 'v2')
+			// change for v2 and v3
+			instanceTest.Stage = 'Sandbox'
+			ApprendaClient.Promote(instanceTest, 'v2')
+			ApprendaClient.PostNewVersion(instanceTest, 'v3')
+			ApprendaClient.PatchApplication(instanceTest, 'v3')
+			ApprendaClient.Promote(instanceTest, 'v3')
+			def uc8data = ApprendaClient.GetApplicationInfo(instanceTest)
+			def uc8vd = new InternalDeployApp().detectVersion(uc8data.getData(), instanceTest)
+		expect:
+			uc8vd.newVersionRequired == false
+			uc8vd.targetVersion == 'v3'
+		cleanup:
+			ApprendaClient.DeleteApplication(instanceTest)
+	}	
 }

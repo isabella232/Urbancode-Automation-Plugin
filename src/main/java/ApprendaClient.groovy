@@ -85,7 +85,7 @@ class ApprendaClient {
 		}
 		getInstance(props)
 		def archive = new File(props.ArchiveName)
-		return client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + props.Stage.toLowerCase(), body:archive.bytes, requestContentType:BINARY)
+		return client.post(path: Constants.REST_API_PATHS.NewVersion + props.AppAlias + "/" + version + "?action=setArchive&stage=" + stage.toLowerCase(), body:archive.bytes, requestContentType:BINARY)
 	}
 			
 	static def Promote(props, version)
