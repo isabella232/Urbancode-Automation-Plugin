@@ -12,10 +12,6 @@
        			 <outputDirectory>src/main/java</outputDirectory>
        		</fileSet>
        		<fileSet>
-       			<directory>src/main/java/exceptions</directory>
-       			<outputDirectory>src/main/java/exceptions</outputDirectory>
-       		</fileSet>
-       		<fileSet>
        			<directory>src/main/java/urbancode</directory>
        			<outputDirectory>src/main/java/urbancode</outputDirectory>
        		</fileSet>
@@ -48,10 +44,9 @@
                 <useStrictFiltering>true</useStrictFiltering>  
                 <useProjectArtifact>false</useProjectArtifact>  
                 <scope>runtime</scope>
-		       	<excludes>
-		       		<exclude>org.codehaus.groovy:groovy-all</exclude>
-		       		<exclude>org.spockframework:spock-core</exclude>
-		       	</excludes>
+                <excludes>
+                	<exclude>org.codehaus.groovy:groovy-all</exclude>
+                </excludes>
             </dependencySet>  
        </dependencySets>  
  </assembly> 

@@ -2,6 +2,7 @@ package test.java
 import spock.lang.Specification
 import groovy.util.logging.Slf4j
 import main.java.ApprendaClient
+import spock.lang.IgnoreRest;
 import spock.lang.Shared
 
 @Slf4j
@@ -27,6 +28,15 @@ class ApprendaClientTest extends Specification {
 			'Stage':props["ACTProperties.Stage"]	
 			]
 	}
+	
+	@IgnoreRest
+	def bypass()
+	{
+		expect:
+			1==1
+	}	
+	
+	
 	
 	def TestApprendaClientInstantiation()
 	{

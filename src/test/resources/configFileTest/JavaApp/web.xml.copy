@@ -8,12 +8,16 @@
       more information.
     </description>
   <context-param>
-    <param-name>webmaster</param-name>
-    <param-value>dutronflask.mybluemix.net</param-value>
+    <param-name>DONOTTOKENIZE</param-name>
+    <param-value>blahblahblah</param-value>
+  </context-param>
+  <context-param>
+  	<param-name>TOKENIZE</param-name>
+    <param-value>$#UDEPLOY-dutronflask#$</param-value>
     <description>
         The EMAIL address of the administrator to whom questions
         and comments about this application should be addressed.
-      </description>
+    </description>
   </context-param>
   <servlet>
     <servlet-name>controller</servlet-name>

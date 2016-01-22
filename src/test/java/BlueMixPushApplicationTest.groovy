@@ -1,41 +1,42 @@
 package test.java;
 import spock.lang.Specification
 
-import spock.lang.Ignore;
-
+import spock.lang.Ignore
+import spock.lang.Shared;
 import main.java.*
 public class BlueMixPushApplicationTest extends Specification {
-	def testProps = [api:'https://api.ng.bluemix.net',
-		appName:'dutronflask',
-		buildpack:'https://github.com/cloudfoundry/python-buildpack',
-		disk:'1G',
-		domain:null,
-		instances:1,
-		manifest:null,
-		memory:'128M',
-		nohostname:false,
-		nomanifest:false,
-		noroute:false,
-		nostart:false,
-		org:'cdutra@apprenda.com',
-		path:'testapps/dutronflask',
-		randomroute:false,
-		selfSigned:false,
-		space:'dev',
-		stack:'cflinuxfs2',
-		subdomain:null,
-		timeout:null,
-		user:'cdutra@apprenda.com',
-		password:'Meepster23']
+
+	
+	@Shared TestProperties = [:]
+	
+	def setupSpec()
+	{
+		def props = new Properties()
+		new File("src/test/resources/testing.properties").withInputStream {
+			stream -> props.load(stream)
+		}
+		testProperties = [
+			'api':props["Bluemix.api"],
+			'user':props["Bluemix.user"],
+			'password':props["Bluemix.password"],
+			'selfsigned':props["Bluemix.selfsigned"],
+			'org':props["Bluemix.org"],
+			'space':props["Bluemix.space"],
+			'application':props["Bluemix.application"],
+			'ApprendaArchiveLocation':props["Bluemix.ApprendaArchiveLocation"],
+			'url':props["Bluemix.url"],
+			'alias':props["Bluemix.alias"]
+			]
+	}
 	
 	@Ignore
 	def TestDeployment()
 	{
 		setup:
 				def internal = new InternalPushApplication()
-		when:
-				internal.deployAppToBlueMix(testProps)
-		then:
-				notThrown Exception
+				internal.deployAppToBlueMix(testProperties)
+				
+		expect:
+				1==1
 	}
 }

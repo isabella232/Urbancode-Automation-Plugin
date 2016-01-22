@@ -12,8 +12,7 @@ public class InternalDeployApp {
 		def newVerStage = versionInfo.currentVersion.stage
 		log.info("targetVersion: " + targetVersion)
 		log.info("newVerStage: " + newVerStage)
-		if(versionInfo.currentVersion.stage == 'Definition' || versionInfo.currentVersion.stage == 'Sandbox')
-		{
+		if(versionInfo.currentVersion.stage == 'Definition' || versionInfo.currentVersion.stage == 'Sandbox'){
 			log.info("Current version is in definition/sandbox, so we will patch v1")
 			return [newVersionRequired:false, targetVersion:'v1', newVerStage:versionInfo.currentVersion.stage]
 		}
@@ -52,6 +51,11 @@ public class InternalDeployApp {
 		}
 	}
 	
+	public static debugFromMain(data)
+	{
+		log.info(data.toString())
+	}
+	
 	public static logFromMain(exception)
 	{
 		log.error("We hit an issue.", exception)
@@ -63,15 +67,17 @@ public class InternalDeployApp {
 	try {
 		internal = new InternalDeployApp()
 		def getApps = ApprendaClient.GetApplicationInfo(props)
-		log.info(getApps.getData())
 		// inject here that if we don't have a new application, we need to create it.
-		if(getApps == null)
+		
+		if(getApps == null || getApps.getData().currentVersion == null)
 		{
 			ApprendaClient.NewApplication(props)
 			// should come back now as v1 and definition
 			getApps = ApprendaClient.GetApplicationInfo(props)
+			InternalDeployApp.debugFromMain(getApps.getData().toString())
 		}
-		def versionOutput = internal.detectVersion(getApps, props)
+		InternalDeployApp.debugFromMain(getApps.getData())
+		def versionOutput = internal.detectVersion(getApps.getData(), props)
 		if(versionOutput.newVersionRequired) 
 		{
 			ApprendaClient.PostNewVersion(props, versionOutput.targetVersion)
@@ -88,7 +94,7 @@ public class InternalDeployApp {
 		}
 	}
 	catch (e) {
-		// Sadly, slf4j doesn't like to log from a main closure in groovy... so we do some fun semantics here.
+		// Sadly, slf4j doesn't like to log from a main closure in groovy... so we trick it.
 		InternalDeployApp.logFromMain(e)
 		//System.exit 1
 		throw e

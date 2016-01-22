@@ -11,6 +11,9 @@ final def props = apTool.getStepProperties()
 @Slf4j
 class InternalBindBluemixComponentToApprendaApp
 {	
+	// UpdateConfigurationFiles(props)
+	// This looks for configuration files to update and map.
+	// When found, it checks for specific tokens and then replaces them.
 	def UpdateConfigurationFiles(props)
 	{
 		def archiveLocation = props.ApprendaArchiveLocation
@@ -45,41 +48,53 @@ class InternalBindBluemixComponentToApprendaApp
 		}
 	}
 	
-	// This method will only update if it finds the token, otherwise it no-ops.
 	private def UpdateWebXmlFile(file, props)
 	{
-		// this is pretty simple. add a context param as a child of web-app
-		def parser = new XmlParser()
-		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		def xml = parser.parse(file)
-		def webappchildren = xml.children()
-		def contextParams = webappchildren.findAll { it.name() == 'context-param' }
-		for(contextParam in contextParams)
+		try
+		{
+			// this is pretty simple. add a context param as a child of web-app
+			def parser = new XmlParser()
+			parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			def xml = parser.parse(file)
+			def webappchildren = xml.children()
+			def contextParams = webappchildren.findAll { it.name() == 'context-param' }
+			if(contextParams == null)
 			{
-				log.info(contextParam)
-				log.info(contextParam.'param-value')
-				log.info(contextParam.'param-value'[0].text())
-				if(contextParam.'param-value'[0].text() == '$#UDEPLOY-' + props.alias + '#$')
-				{
-					log.info("found a match")
-					contextParam.'param-value'[0].value = props.url
-				}
-				else
-				{
-					log.info("no match")
-				}
+				log.warn("No context parameters were found in the configuration file for this application, exiting...")
+				return
 			}
-		// for testing purposes
-		def s = new StringWriter()
-		def printer = new XmlNodePrinter(new PrintWriter(s))
-		printer.preserveWhitespace = true
-		printer.print(xml)
-		log.info(s)
-		def filewriter = new FileWriter(file)
-		def w = new XmlNodePrinter(new PrintWriter(filewriter))
-		w.preserveWhitespace = true
-		w.print(xml)
+			for(contextParam in contextParams)
+				{
+					log.info(contextParam.toString())
+					log.info((contextParam.'param-value').toString())
+					log.info((contextParam.'param-value'[0].text()).toString())
+					log.info("alias: " + props.alias)
+					if(contextParam.'param-value'[0].text() == '$#UDEPLOY-' + props.alias + '#$')
+					{
+						log.info("found a match")
+						contextParam.'param-value'[0].value = props.url
+					}
+					else
+					{
+						log.info("no match")
+					}
+				}
+			// for testing purposes
+			def s = new StringWriter()
+			def printer = new XmlNodePrinter(new PrintWriter(s))
+			printer.preserveWhitespace = true
+			printer.print(xml)
+			def filewriter = new FileWriter(file)
+			def w = new XmlNodePrinter(new PrintWriter(filewriter))
+			w.preserveWhitespace = true
+			w.print(xml)
+		}
+		catch(e)
+		{
+			log.error("Found issue during web.xml update:", e)
+			throw e
+		}
 	}	
 	
 
@@ -91,32 +106,65 @@ class InternalBindBluemixComponentToApprendaApp
 		def xml = parser.parse(file)
 		def children = xml.children()
 		def appSettings = children.find { it.name() == 'appSettings' }
+		if(appSettings == null)
+		{
+			log.warn("No application settings were found in the configuration file for this application, exiting...")
+			return
+		}
 		def appSettingsChildren = appSettings.children()
 		for(child in appSettingsChildren)
 		{
-			log.info(child)
-			log.info(child.@value)
-			if(child.@value == '$#UDEPLOY-' + props.alias + '#$')
+			log.info(child.toString())
+			log.info((child.'@value').toString())
+			log.info("alias: " + props.alias)
+			if(child.'@value' == '$#UDEPLOY-' + props.alias + '#$')
 			{
 				log.info("found a match")
-				child.@value = props.url
+				child.'@value' = props.url
+			}
+			else
+			{
+				log.info("no match")
 			}
 		}
 		def s = new StringWriter()
 		def printer = new XmlNodePrinter(new PrintWriter(s))
 		printer.preserveWhitespace = true
 		printer.print(xml)
-		log.info(s)
 		def filewriter = new FileWriter(file)
 		def w = new XmlNodePrinter(new PrintWriter(filewriter))
 		w.preserveWhitespace = true
 		w.print(xml)
 	}
 	
-	//private def UpdateDockerFile(file, props)
-	//{
-	//	log.info("Unimplemented method")
-	//}
+	private def UpdateDockerFile(file, props)
+	{
+		// so since dockerfiles are NOT XML...this gets fun.
+		def dockerfilecache = []
+		file.eachLine{ line ->
+			// if the line is not blank
+			def envInserted = false
+			if(line.trim()){
+				// first add the line to the cache
+				if(line.contains("FROM") || line.contains("MAINTAINER"))
+				{
+					dockerfilecache.add(line)
+				}
+				else
+				{
+					// means the first time we come across a non-header entity in the dockerfile
+					if(!envInserted)
+					{
+						dockerfilecache.add("ENV " + props.alias + " " + props.url + " \r\n")
+						envInserted = true
+					}
+					dockerfilecache.add(line)
+				}
+			}
+		}
+		// write cache back to file, with our newly specified environment variable
+		file << dockerfilecache
+	}
 		
 	final def workDir = new File('.').canonicalFile;
 	def commandHelper = new CommandHelper(workDir);
@@ -134,7 +182,7 @@ class InternalBindBluemixComponentToApprendaApp
 			log.info("Setting CF_HOME to: " + cfHome)
 			commandHelper.addEnvironmentVariable("CF_HOME", cfHome.toString());
 		} catch(e){
-			("ERROR setting path: ${e.message}")
+			log.info("ERROR setting path: ${e.message}")
 			return null
 		}
 		try {
@@ -203,7 +251,7 @@ try
 		System.exit 1
 	}
 	props.put('url', applicationInfo.urls)
-	//internal.UpdateConfigurationFiles(props)
+	internal.UpdateConfigurationFiles(props)
 	//System.exit(0)
 	return
 }

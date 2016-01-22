@@ -130,24 +130,33 @@ class ApprendaClient {
 	static def GetAllAddons(props)
 	{
 		getInstance(props)
-		return client.getAt(path:Constants.REST_API_PATHS.GetAddonInstances)
+		return client.get(path:Constants.REST_API_PATHS.GetAddonInstances)
 	}
 	
 	static def GetAddonInstanceInfo(props)
 	{
 		getInstance(props)
-		return client.getAt(path:Constants.REST_API_PATHS.GetAddonInstances + "/" + props.AddonAlias + "/" + props.AddonInstanceAlias)
+		return client.get(path:Constants.REST_API_PATHS.GetAddonInstances + "/" + props.AddonAlias + "/" + props.AddonInstanceAlias)
 	}
 	
 	static def SetInstanceCount(props, version)
 	{
 		getInstance(props)
-		return client.post(path:Constants.REST_API_PATHS.SetInstanceCount + "/" + props.AppAlias + "/" + version + "/" + props.ComponentAlias + "/scale/" + props.InstanceCount)
+		return client.post(path:Constants.REST_API_PATHS.SetInstanceCount + "/" + props.AppAlias + "/" + version + "/" + props.ComponentAlias + Constants.REST_API_PATHS.PostSIC + props.InstanceCount)
+	}
+	
+	static def GetAllApplicationComponents(props,version)
+	{
+		getInstance(props)
+		return client.get(path:Constants.REST_API_PATHS.GetComponentInfo + "/" + props.AppAlias + "/" + version)
 	}
 	
 	static def GetComponentInfo(props, version)
 	{
 		getInstance(props)
-		return client.getAt(path:Constants.REST_API_PATHS.GetComponentInfo + "/" + props.AppAlias + "/" + version)
+		return client.get(path:Constants.REST_API_PATHS.GetComponentInfo + "/" + props.AppAlias + "/" + version + "/" + props.ComponentAlias)
 	}
+	
+	
+	
 }

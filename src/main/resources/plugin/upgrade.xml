@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin-upgrade xmlns="http://www.urbancode.com/UpgradeXMLSchema_v1" xmlns:server="http://www.urbancode.com/PluginServerXMLSchema_v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<migrate to-version="5">
+	<migrate to-version="6">
 		<migrate-command name="Deploy to Apprenda">
 		</migrate-command>
 		<migrate-command name="Deploy BlueMix Component">
@@ -19,6 +19,9 @@
 			</migrate-properties>
 		</migrate-command>
 		<migrate-command name="Scale Apprenda App">
+			<migrate-properties>
+				<migrate-property name="InstanceCount"/>
+			</migrate-properties>
 		</migrate-command>
 	</migrate>
 </plugin-upgrade>

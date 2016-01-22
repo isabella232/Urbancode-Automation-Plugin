@@ -281,6 +281,9 @@
         <property name="ComponentAlias">
         	<property-ui description="The Component Alias being used to scale" label="Component" type="textBox"/>
         </property>
+        <property name="InstanceCount">
+        	<property-ui description="Set the number of instances being used to scale. Apprenda will do everything in its power to achieve this count." label="Number of Instances" type="textBox" />
+        </property>
   	</properties>
   	<post-processing><![CDATA[
         if (properties.get("exitCode") != 0) {
@@ -292,8 +295,8 @@
      ]]></post-processing>
   	<command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
-      <arg path="apprenda-plugin.jar:lib/gson-2.2.4.jar:lib/slf4j-api-1.7.13.jar:lib/slf4j-simple-1.7.13.jar"/>
-      <arg file="src/main/java/ScaleApp.groovy"/>
+      <arg path="apprenda-plugin.jar:lib/slf4j-api-1.7.13.jar:lib/slf4j-simple-1.7.13.jar:lib/gson-2.2.4.jar:lib/http-builder-0.7.1.jar:lib/httpclient-4.2.1.jar:lib/httpcore-4.2.1.jar:lib/json-lib-2.4-jdk15.jar:lib/xml-resolver-1.2.jar:lib/commons-lang-2.6.jar:lib/ezmorph-1.0.6.jar:lib/commons-collections-3.2.1.jar:lib/commons-beanutils-1.9.2.jar:lib/nekohtml-1.9.16.jar:lib/xercesImpl-2.9.1.jar"/>
+ 	  <arg file="src/main/java/ScaleApp.groovy"/>
       <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
   	</command>

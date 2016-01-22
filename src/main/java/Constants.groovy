@@ -11,5 +11,6 @@ public class Constants {
 		DeleteApplication: '/developer/api/v1/apps',
 		GetAddonInstances: '/developer/api/v1/addons',
 		SetInstanceCount: '/developer/api/v1/components',
-		GetComponentInfo: '/developer/api/v1/components'
+		GetComponentInfo: '/developer/api/v1/components',
+		PostSIC: '?action=setInstanceCount&count='
 ]}
