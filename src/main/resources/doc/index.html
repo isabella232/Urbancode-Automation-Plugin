@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Apprenda Automation Plugin for Urbancode Deploy - Documentation</title>
+<link rel="alternate" type="application/rss+xml" title="egrappler.com" href="feed/index.html">
+<link href="http://fonts.googleapis.com/css?family=Raleway:700,300" rel="stylesheet"
+        type="text/css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/prettify.css">
+<link type="image/x-icon" href="https://apprenda.com/favicon.ico" rel="icon" />
+<link type="image/x-icon" href="https://apprenda.com/favicon.ico" rel="shortcut icon" />
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div id="menu">
+      <ul class="toplinks">
+        <li><img src="assets/images/apprendalogo.png"></li>
+        <li><a href="#"><strong>INTEGRATIONS</strong></a></li>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Github</a></li>
+        <li><a href="#">Other Integrations</a></li>
+      </ul>
+    </div>
+    <a id="menu-toggle" href="#" class=" ">&#9776;</a> </div>
+</nav>
+<header>
+  <div class="container">
+    <h2 class="docs-header">Urbancode Deploy Automation Plugin</h2>
+  </div>
+</header>
+<section>
+  <div class="container">
+    <ul class="docs-nav" id="menu-left">
+      <li><strong>Getting Started</strong></li>
+      <li><a href="#overview" class=" ">Overview</a></li>
+      <li><a href="#releasenotes" class=" ">Release Notes</a></li>
+      <li><a href="#license" class=" ">License</a></li>
+      <li class="separator"></li>
+      <li><strong>Installation and Usage</strong></li>
+      <li><a href="#install" class=" ">Installing the Plugin</a></li>
+      <li><a href="#setup" class=" ">Creating a Deployment Process</a></li>
+      <li><a href="#execution" class=" ">Executing the Deployment</a></li>
+      <li class="separator"></li>
+      <li><strong>Configuration</strong></li>
+      <li><a href="#envars" class=" ">Environment Variables</a></li>
+      <li class="separator"></li>
+      <li><strong>Build Steps</strong></li>
+      <li><a href="#deployToApprenda">Deploy to Apprenda</a></li>
+      <li><a href="#deployBluemixComponent">Deploy Bluemix Component</a></li>
+      <li><a href="#createBluemixService">Create Bluemix Service</a></li>
+      <li><a href="#addBluemixComponentToApprendaApplication">Add Bluemix Component to Apprenda Application</a></li>
+      <li><a href="#addApprendaComponentToBluemixApplication">Add Apprenda Component to Bluemix Application</a></li>
+      <li><a href="#mapRouteToBluemixComponent">Map Route to Bluemix Component</a></li>
+      <li><a href="#unmapRouteToBluemixComponent">Unmap Route to Bluemix Component</a></li>
+      <li><a href="#deleteBluemixComponent">Delete Bluemix Component</a></li>
+      <li><a href="#startBluemixComponent">Start Bluemix Component</a></li>
+      <li><a href="#stopBluemixComponent">Stop Bluemix Component</a></li>
+      <li><a href="#restartBluemixComponent">Restart Bluemix Component</a></li>
+      <li><a href="#scaleApprendaApplication">Scale Apprenda Application</a></li>
+    </ul>
+    <div class="docs-content">
+      <h2> Getting Started</h2>
+      <h3 id="overview"> Overview</h3>
+        <p>IBM Urbancode Deploy provides the ability for IT organizations to be able to continuously deliver their applications to production in a timely, secure, efficient manner. This integration extends that functionality and provides IT to target the Apprenda platform as an endpoint. </p>
+      <h3 id="benefits"> Release Notes</h3>
+        <ul>
+            <li>Version 1.0</li>
+                <ul>
+                    <li>Initial release.</li>
+                </ul>
+        </ul>
+      <h3 id="features"> Features</h3>
+        <ul>
+            <li>Provides the ability to target Apprenda as an endpoint, enabling organiztions to deploy and update applications to the platform.</li>
+            <li>Deploy components to Bluemix, IBM's platform as a service (PaaS)</li>
+            <li>Create and update Bluemix services.</li>
+            <li>Bind Bluemix components to Apprenda applications, and vice versa.</li>
+        </ul>
+      <h3 id="license"> License</h3>
+        <p> Copyright (c) 2015 Apprenda Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        </p>
+      <hr>
+      <h2> Installation and Usage</h2>
+      <h3 id="install"> Installing the Plugin</h3>
+        <p>Installation is straightforward. Download the zip file from the Apprenda GitHub page. It will contain everything you need to get started.</p>
+        <p>After logging in, navigate to <strong>Settings -> Automation Plugins</strong>. From there, select <strong>Load Plugin</strong>. You will be presented with this screen:</p>
+        <img src="assets/images/install01.png" />
+        <p>Upload the zip file, and click <strong>Submit.</strong></p>
+      <h3 id="setup">Creating a Deployment Process</h3>
+        <p><i>As a prerequisite, you must have a component created and have the source configuration setup. For assistance on this, please refer to your Urbancode Documentation.</i></p>
+        <p>Typically, component processes are where application deployment steps are heavily used. At the application level you will be deploying multiple components, each with their own definition. This is where the Apprenda build steps will be used.</p>
+        <ul>
+            <li>Navigate to your existing component, and then click on the <strong>Processes</strong> tab. You should be at a screen similar to below: </li>
+            <img src="assets/images/deploy01.png" />
+            <li>Click on <strong>Create Process</strong>. A dialog will pop up. Enter values for the name, description (optionally), and for now leave the rest as-is.</li>
+            <img src="assets/images/deploy02.png" />
+            <li>Once the process has been created, navigate to the Process Design tab, and you will find a workflow GUI editor. This is where you will create the process to deplpoy your application to Apprenda. For more information on specific build steps, please refere to the <a href="#buildsteps">build steps section</a>. A sample configuration is shown below.</li>
+            <img src="assets/images/deploy03.png" />
+            <li><i>Note: you will find all of the Apprenda and Bluemix deploy steps in the <strong>PaaS</strong> folder.</i></li>
+        </ul>
+      <h3 id="execution"> Executing a Deployment with the Plugin</h3>
+        <p>First, navigate to the Urbancode installation and log in. We're using admin credentials here, but make sure you are using an ID that has the necessary permissions to create processes, alter applications and components.</p>
+        <img src="assets/images/usage01.png"/>
+        <p>Navigate to the Applications tab, and find the application you created in the previous section.</p>
+        <img src="assets/images/usage02.png"/>
+        <p>Select which environment you wish to deploy to (here, the Apprenda Demo Environment), and then click on the circled right arrow to begin the process.</p>
+        <img src="assets/images/usage03.png"/>
+        <p>A window will appear asking you to select the application process. Select the one that will run the component processes that include the Apprenda build steps.</p>
+        <img src="assets/images/usage04.png"/>
+        <p>Click on Choose Versions, and select the Latest Available version for each component you want to deploy.</p>
+        <img src="assets/images/usage05.png"/>
+        <p>Click on OK, and you will progress to the next screen which shows the deployment in action. </p>
+        <img src="assets/images/usage06.png"/>
+      <hr>
+      <h2> Configuration</h2>
+      <h3 id="envars"> Environment Variables</h3>
+        <p>Urbancode provides the ability for an organization to specify environment variables that can be used across multiple build steps and processes. The Apprenda automation plugin takes advantage of this, and puts the environment variables at the <strong>resource</strong> level. Please refer to the Urbancode Deploy documentation for assistance on how to setup environment variables. Here's a list of environment variables that, depending on your internal requirements, will require setup:</p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Variable Name</td>
+                    <td>Description</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd" id="env_apprendaurl">
+                    <td>${p:resource/Apprenda_URL}</td>
+                    <td>The root URL of the Apprenda instance.</td>
+                </tr>
+                <tr class="even" id="env_apprendassf">
+                    <td>${p:resource/Apprenda_SSF}</td>
+                    <td>If you are using a self-signed certificate for testing purposes, check this box. Do NOT use for Production.</td>
+                </tr>
+                <tr class="odd" id="env_apprendauser">
+                    <td>${p:resource/Apprenda_User}</td>
+                    <td>The name of the account that will be used for deployments. Do not set this if you plan on using >1 account in your deployments.</td>
+                </tr>
+                <tr class="even" id="env_apprendapw">
+                    <td>${p:resource/Apprenda_PW}</td>
+                    <td>The corresponding password that will be used for deployments. Do not set this if you plan on using >1 account in your deployments.</td>
+                </tr>
+                <tr class="odd" id="env_apprendatenant">
+                    <td>${p:resource/Apprenda_Tenant}</td>
+                    <td>The name of the developer team that will be deploying applications. Set this only if you want to specify a default developer team.</td>
+                </tr>
+                <tr class="even" id="env_bluemixapi">
+                    <td>${p:resource/Bluemix_API}</td>
+                    <td>The url of the Bluemix endpoint, as of press time this should be set to <strong>https://api.ng.bluemix.net</strong>. If you are using a proxy, set the URL here.</td>
+                </tr>
+                <tr class="odd" id="env_bluemixuser">
+                    <td>${p:resource/Bluemix_User}</td>
+                    <td>The name of the Bluemix user. Do not set this if you plan on using >1 Bluemix account in your deployments.</td>
+                </tr>
+                <tr class="even" id="env_bluemixpw">
+                    <td>${p:resource/Bluemix_PW}</td>
+                    <td>The corresponding password. Do not set this if you plan on using >1 Bluemix account in your deployments.</td>
+                </tr>
+                <tr class="odd" id="env_bluemixorg">
+                    <td>${p:resource/Bluemix_ORG}</td>
+                    <td>The name of the Bluemix organization. Set this only if you want to specify a default organization, or if this is a single-organization entity.</td>
+                </tr>
+                <tr class="even" id="env_bluemixspace">
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                    <td>The name of the Bluemix Space in which to perform the respective build action. Set this only if you want to specify a default space.</td>
+                </tr>
+            </tbody>
+        </table>
+      <hr>
+      <h2 id="buildsteps"> Build Steps</h2>
+      <p>Note: for all build step parameters, required ones are in <strong>bold</strong>.</p>
+      <h3 id="deployToApprenda">Deploy to Apprenda</h3>
+        <p><strong>Objective: </strong> Deploys the application to Apprenda, creating it if it does not exist.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>ApprendaURL</strong></td>
+                    <td>The root URL of the Apprenda instance.</td>
+                    <td>${p:resource/Apprenda_URL}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>SelfSignedFlag</strong></td>
+                    <td>Check this is your are using a development environment. Do NOT enable in production.</td>
+                    <td>${p:resource/Apprenda_SSF}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>ApprendaUser</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Apprenda_User}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>ApprendaPassword</strong></td>
+                    <td>The respective password.</td>
+                    <td>${p:resource/Apprenda_PW}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>TenantAlias</strong></td>
+                    <td>The name of your development team.</td>
+                    <td>${p:resource/Apprenda_Tenant}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>AppAlias</strong></td>
+                    <td>The alias of the application. If an application with this alias does not exist, this plugin will create a new application.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>ArchiveName</strong></td>
+                    <td>Relative path to the name of the archive being deployed to Apprenda.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>AutoIncrementVersion</td>
+                    <td>Set to true if you want to force the creation of a new version. Restrictions apply, see Usage.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>Stage</strong></td>
+                    <td>The target stage of the deployment. Valid values are definition, sandbox, and published.</td>
+                    <td>Definition</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="deployBluemixComponent">Deploy Bluemix Component</h3>
+        <p><strong>Objective: </strong> Deploys the application to Apprenda, creating it if it does not exist.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>appName</td>
+                    <td>The name of the application to use when deployed. Required if not using a manifest.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>manifest</td>
+                    <td>If you are using a manifest with the deployment, specify here.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>domain</td>
+                    <td>If you are using a custom domain, set it here.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>subdomain</td>
+                    <td>Sets a unique subdomain route for the application.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>instances</td>
+                    <td>The number of instances you wish to create during the deployment. Use with other Bluemix services to take advantage of auto-scaling, elasticity, etc. </td>
+                    <td>1</td>
+                </tr>
+                <tr class="even">
+                    <td>memory</td>
+                    <td>The amount of memory each instance of the application should provision.</td>
+                    <td>None (uses default Bluemix settings)</td>
+                </tr>
+                <tr class="odd">
+                    <td>disk</td>
+                    <td>The amount of local stage should be allocated for each instance of the application.</td>
+                    <td>None (uses default Bluemix settings)</td>
+                </tr>
+                <tr class="even">
+                    <td>buildpack</td>
+                    <td>Specify the buildpack you want the application to use for its runtime.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>path</td>
+                    <td>If not using the root working directory, specify the path to the root folder of the application.</td>
+                    <td>None (uses CWD)</td>
+                </tr>
+                <tr class="even">
+                    <td>stack</td>
+                    <td>Specify the OS stack the application will use.</td>
+                    <td>None (uses default Bluemix settings)</td>
+                </tr>
+                <tr class="odd">
+                    <td>timeout</td>
+                    <td>Specify the length of time that Bluemix should wait after your app deployment for the application to come online.</td>
+                    <td>None (uses Bluemix default)</td>
+                </tr>
+                <tr class="even">
+                    <td>nostart</td>
+                    <td>Check if you wish your application to not start after deployment.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>noroute</td>
+                    <td>Check if you wish your application to not have a route created and bound to it's runtime. Note: your application will be unavailable for use after deployment until a route is mapped.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="even">
+                    <td>nomanifest</td>
+                    <td>Check if you want the process to bypass searching for a manifest to pick up. Ideal for when using a custom deployment.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>nohostname</td>
+                    <td>Check if you do not wish for a hostname to be created for the application.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="even">
+                    <td>randomroute</td>
+                    <td>Check if you would rather have a random route created and mapped to the application than specifying a named route.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>pathToCF</td>
+                    <td>This is the path to the CF CLI on the agent, which is used to deploy the application to Bluemix. This is usually covered by an environment variable.</td>
+                    <td>${p:resource/Bluemix_CFPATH}</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="createBluemixService">Create Bluemix Service</h3>
+        <p><strong>Objective: </strong> Creates a new Bluemix service.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>name</td>
+                    <td>User-friendly name of the service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>service</td>
+                    <td>Name of the bluemix service you wish to provision.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>plan</td>
+                    <td>This is the service plan you wish to use when provisioning the service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>pathToCF</td>
+                    <td>This is the agent's path to execute the Bluemix CLI</td>
+                    <td>None</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="addBluemixComponentToApprendaApplication">Add Bluemix Component to Apprenda Application</h3>
+        <p><strong>Objective: </strong> Makes the Apprenda-bound application aware of components and services in Bluemix.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+               <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>component</td>
+                    <td>This is the user-friendly name of the component or service currently provisioned in Bluemix.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>componentType</td>
+                    <td>Specify whether the component is an application or service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>ApprendaArchiveLocation</td>
+                    <td>This root directory of the apprenda application, where we'll start searching for configuration files.</td>
+                    <td>.\</td>
+                </tr>
+                <tr class="even">
+                    <td>pathToCF</td>
+                    <td>Sets the agent path to execute the Bluemix CLI.</td>
+                    <td>None</td>
+                </tr>
+            </tbody>
+        </table>
+        <!--
+      <h3 id="addApprendaComponentToBluemixApplication">Add Apprenda Component to Bluemix Application</h3>
+        <p><strong>Objective: </strong> Makes the Bluemix-bound application aware of components and services in Apprenda.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td>ApprendaURL</td>
+                    <td>The root URL of the Apprenda instance.</td>
+                    <td>${p:resource/Apprenda_URL}</td>
+                </tr>
+                <tr class="even">
+                    <td>SelfSignedFlag</td>
+                    <td>Check this is your are using a development environment. Do NOT enable in production.</td>
+                    <td>${p:resource/Apprenda_SSF}</td>
+                </tr>
+                <tr class="odd">
+                    <td>ApprendaUser</td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Apprenda_User}</td>
+                </tr>
+                <tr class="even">
+                    <td>ApprendaPassword</td>
+                    <td>The respective password.</td>
+                    <td>${p:resource/Apprenda_PW}</td>
+                </tr>
+                <tr class="odd">
+                    <td>TenantAlias</td>
+                    <td>The name of your development team.</td>
+                    <td>${p:resource/Apprenda_Tenant}</td>
+                </tr>
+                <tr class="even">
+                    <td>AppAlias</td>
+                    <td>The alias of the application. If an application with this alias does not exist, this plugin will create a new application.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>component</td>
+                    <td>This is the user-friendly name of the component or service currently provisioned in Bluemix.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>pathToCF</td>
+                    <td>Sets the agent path to execute the Bluemix CLI.</td>
+                    <td>None</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="mapRouteToBluemixComponent">Map Route to Bluemix Component</h3>
+        <p><strong>Objective: </strong> Deploys the application to Apprenda, creating it if it does not exist.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>app</td>
+                    <td>User-friendly name of the service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>domain</td>
+                    <td>Name of the bluemix service you wish to provision.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>hostname</td>
+                    <td>This is the service plan you wish to use when provisioning the service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>pathToCF</td>
+                    <td>This is the agent's path to execute the Bluemix CLI</td>
+                    <td>None</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="unmapRouteToBluemixComponent">Unmap Route to Bluemix Component</h3>
+        <p><strong>Objective: </strong> Removes the route to a Bluemix component, potentially making it unavailable if another route isn't mapped.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>app</td>
+                    <td>User-friendly name of the service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>domain</td>
+                    <td>Name of the bluemix service you wish to provision.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>hostname</td>
+                    <td>This is the service plan you wish to use when provisioning the service.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>pathToCF</td>
+                    <td>This is the agent's path to execute the Bluemix CLI</td>
+                    <td>None</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="deleteBluemixComponent">Delete Bluemix Component</h3>
+        <p><strong>Objective: </strong> Deletes the Bluemix component.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>appName</td>
+                    <td>Relative path to the name of the archive being deployed to Apprenda.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>manifest</td>
+                    <td>Set to true if you want to force the creation of a new version. Restrictions apply, see Usage.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>domain</td>
+                    <td>The target stage of the deployment. Valid values are definition, sandbox, and published.</td>
+                    <td>Definition</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="startBluemixComponent">Start Bluemix Component</h3>
+        <p><strong>Objective: </strong> Starts a Bluemix component, making it available on its preconfigured route.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>appName</td>
+                    <td>Relative path to the name of the archive being deployed to Apprenda.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>manifest</td>
+                    <td>Set to true if you want to force the creation of a new version. Restrictions apply, see Usage.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>domain</td>
+                    <td>The target stage of the deployment. Valid values are definition, sandbox, and published.</td>
+                    <td>Definition</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="stopBluemixComponent">Stop Bluemix Component</h3>
+        <p><strong>Objective: </strong> Stops Bluemix component, thereby making it unavailable.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>appName</td>
+                    <td>Relative path to the name of the archive being deployed to Apprenda.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>manifest</td>
+                    <td>Set to true if you want to force the creation of a new version. Restrictions apply, see Usage.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>domain</td>
+                    <td>The target stage of the deployment. Valid values are definition, sandbox, and published.</td>
+                    <td>Definition</td>
+                </tr>
+            </tbody>
+        </table>
+      <h3 id="restartBluemixComponent">Restart Bluemix Component</h3>
+        <p><strong>Objective: </strong> Restarts the bluemix component.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+               <tr class="odd">
+                    <td><strong>api</strong></td>
+                    <td>The target Bluemix system, eg. https://api.ng.bluemix.net.</td>
+                    <td>${p:resource/Bluemix_API}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>user</strong></td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Bluemix_User}</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>password</strong></td>
+                    <td>The developer account password associated with the platform.</td>
+                    <td>${p:resource/Bluemix_PW}</td>
+                </tr>
+                <tr class="even">
+                    <td>selfsigned</td>
+                    <td>Use only if you require to bypass security due to a self signed certificate</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td><strong>org</strong></td>
+                    <td>The name of the organization where the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_ORG}</td>
+                </tr>
+                <tr class="even">
+                    <td><strong>space</strong></td>
+                    <td>The name of the space within the organization that the application will be deployed.</td>
+                    <td>${p:resource/Bluemix_SPACE}</td>
+                </tr>
+                <tr class="odd">
+                    <td>appName</td>
+                    <td>Relative path to the name of the archive being deployed to Apprenda.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="even">
+                    <td>manifest</td>
+                    <td>Set to true if you want to force the creation of a new version. Restrictions apply, see Usage.</td>
+                    <td>False</td>
+                </tr>
+                <tr class="odd">
+                    <td>domain</td>
+                    <td>The target stage of the deployment. Valid values are definition, sandbox, and published.</td>
+                    <td>Definition</td>
+                </tr>
+            </tbody>
+        </table>
+        -->
+      <h3 id="scaleApprendaApplication">Scale Apprenda Application</h3>
+        <p><strong>Objective: </strong> This build step will set the instance count of the application. Depending on how many instances are running at that given time, Apprenda will either create or remove instances to achieve this count.</p>
+        <p><strong>Parameters: </strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Default Value</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td>ApprendaURL</td>
+                    <td>The root URL of the Apprenda instance.</td>
+                    <td>${p:resource/Apprenda_URL}</td>
+                </tr>
+                <tr class="even">
+                    <td>SelfSignedFlag</td>
+                    <td>Check this is your are using a development environment. Do NOT enable in production.</td>
+                    <td>${p:resource/Apprenda_SSF}</td>
+                </tr>
+                <tr class="odd">
+                    <td>ApprendaUser</td>
+                    <td>The developer account username associated with the platform.</td>
+                    <td>${p:resource/Apprenda_User}</td>
+                </tr>
+                <tr class="even">
+                    <td>ApprendaPassword</td>
+                    <td>The respective password.</td>
+                    <td>${p:resource/Apprenda_PW}</td>
+                </tr>
+                <tr class="odd">
+                    <td>TenantAlias</td>
+                    <td>The name of your development team.</td>
+                    <td>${p:resource/Apprenda_Tenant}</td>
+                </tr>
+                <tr class="even">
+                    <td>AppAlias</td>
+                    <td>The alias of the application. If an application with this alias does not exist, this step will fail.</td>
+                    <td>None</td>
+                </tr>
+                <tr class="odd">
+                    <td>InstanceCount</td>
+                    <td>The instance count of the application.</td>
+                    <td>None</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="container">
+    <p> &copy; 2015 Apprenda Inc.</p>
+  </div>
+</footer>
+<script src="assets/js/jquery.min.js"></script> 
+<script type="text/javascript" src="assets/js/prettify/prettify.js"></script> 
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=css&skin=sunburst"></script>
+<script src="assets/js/layout.js"></script>
+<script src="assets/js/jquery.localscroll-1.2.7.js" type="text/javascript"></script>
+<script src="assets/js/jquery.scrollTo-1.4.3.1.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<web-app>
+  <display-name>My Web Application</display-name>
+  <description>
+      This is version X.X of an application to perform
+      a wild and wonderful task, based on servlets and
+      JSP pages.  It was written by Dave Developer
+      (dave@mycompany.com), who should be contacted for
+      more information.
+    </description>
+  <context-param>
+    <param-name>DONOTTOKENIZE</param-name>
+    <param-value>blahblahblah</param-value>
+  </context-param>
+  <context-param>
+    <param-name>TOKENIZE</param-name>
+    <param-value>dutronflask.mybluemix.net</param-value>
+    <description>
+        The EMAIL address of the administrator to whom questions
+        and comments about this application should be addressed.
+    </description>
+  </context-param>
+  <servlet>
+    <servlet-name>controller</servlet-name>
+    <description>
+        This servlet plays the "controller" role in the MVC architecture
+        used in this application.  It is generally mapped to the ".do"
+        filename extension with a servlet-mapping element, and all form
+        submits in the app will be submitted to a request URI like
+        "saveCustomer.do", which will therefore be mapped to this servlet.
+
+        The initialization parameter namess for this servlet are the
+        "servlet path" that will be received by this servlet (after the
+        filename extension is removed).  The corresponding value is the
+        name of the action class that will be used to process this request.
+      </description>
+    <servlet-class>com.mycompany.mypackage.ControllerServlet</servlet-class>
+    <init-param>
+      <param-name>listOrders</param-name>
+      <param-value>com.mycompany.myactions.ListOrdersAction</param-value>
+    </init-param>
+    <init-param>
+      <param-name>saveCustomer</param-name>
+      <param-value>com.mycompany.myactions.SaveCustomerAction</param-value>
+    </init-param>
+    <load-on-startup>5</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>graph</servlet-name>
+    <description>
+        This servlet produces GIF images that are dynamically generated
+        graphs, based on the input parameters included on the request.
+        It is generally mapped to a specific request URI like "/graph".
+      </description>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>controller</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>graph</servlet-name>
+    <url-pattern>/graph</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+</web-app>
