@@ -31,13 +31,6 @@ class ScaleAppTest extends Specification {
 			]
 	}
 	
-	@IgnoreRest
-	def bypass()
-	{
-		expect:
-			1==1
-	}
-	
 	def TestInstanceScale()
 	{
 		setup:

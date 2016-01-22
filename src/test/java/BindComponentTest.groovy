@@ -13,8 +13,6 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption;
 import java.nio.file.Files
 
-
-
 @Slf4j
 class BindComponentTest extends Specification {
 

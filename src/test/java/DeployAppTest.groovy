@@ -28,15 +28,7 @@ public class DeployAppTest extends Specification {
 			'Stage':props["ACTProperties.Stage"]	
 			]
 	}
-	
-	// I use this for bypassing all of the tests in a given class during maven test runs. 
-	@IgnoreRest
-	def Bypass()
-	{
-		expect:
-			1 == 1
-	}
-	
+		
 	def Test1vDefinition()
 	{
 		setup:

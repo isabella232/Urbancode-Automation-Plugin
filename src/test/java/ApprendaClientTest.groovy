@@ -29,15 +29,6 @@ class ApprendaClientTest extends Specification {
 			]
 	}
 	
-	@IgnoreRest
-	def bypass()
-	{
-		expect:
-			1==1
-	}	
-	
-	
-	
 	def TestApprendaClientInstantiation()
 	{
 		setup:
