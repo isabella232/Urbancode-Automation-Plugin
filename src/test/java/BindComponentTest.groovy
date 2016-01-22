@@ -82,7 +82,6 @@ class BindComponentTest extends Specification {
 			areaToTest.toString() != areaToTestAgainst.toString()
 	}
 	
-	@IgnoreRest
 	def TestUpdateDotNetFile()
 	{
 		setup:
