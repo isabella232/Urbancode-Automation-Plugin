@@ -6,9 +6,11 @@ This project provides an integration for IBM Urbancode Deploy and Apprenda, enab
 
 In addition, the automation plugin provides the ability for Apprenda applications to consume components and services from IBM Bluemix, enabling hybrid applications to run on both platform as as service (PaaS) environments.
 
+This has been tested to work on the Apprenda platform versions 6.5.1/2/3, and works on Urbancode 6.1.x and up, inlcuding 6.2.2. 
+
 ## License
 
-Copyright (c) 2015 Apprenda Inc.
+Copyright (c) 2016 Apprenda Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
